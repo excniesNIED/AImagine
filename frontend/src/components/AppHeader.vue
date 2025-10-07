@@ -11,7 +11,7 @@
 
         <!-- Desktop Navigation with Glider -->
         <nav class="hidden md:block">
-          <div class="nav-tabs">
+          <div class="nav-tabs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200">
             <a 
               v-for="(item, index) in navItems" 
               :key="index"
@@ -30,7 +30,7 @@
           <!-- Mobile Menu Button (only on mobile) -->
           <button
             @click="showMobileMenu = !showMobileMenu"
-            class="mobile-menu-btn md:hidden"
+            class="mobile-menu-btn inline-flex items-center justify-center md:hidden"
           >
             <svg v-if="!showMobileMenu" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -72,7 +72,7 @@
             </button>
             
             <transition name="dropdown">
-              <div v-if="showUserMenu" class="user-dropdown">
+              <div v-if="showUserMenu" class="user-dropdown bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">
                 <a href="/profile" class="dropdown-item">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -111,7 +111,7 @@
 
     <!-- Mobile Navigation Menu -->
     <transition name="mobile-menu">
-      <div v-if="showMobileMenu" class="mobile-menu md:hidden">
+      <div v-if="showMobileMenu" class="mobile-menu md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
         <div class="mobile-nav-container">
           <a 
             v-for="(item, index) in navItems" 
@@ -251,7 +251,7 @@ const logout = async () => {
 .nav-tabs {
   display: flex;
   position: relative;
-  background-color: #fff;
+  background-color: transparent;
   box-shadow: 0 0 1px 0 rgba(24, 94, 224, 0.15), 0 6px 12px 0 rgba(24, 94, 224, 0.15);
   padding: 0.5rem;
   border-radius: 99px;
@@ -259,7 +259,7 @@ const logout = async () => {
 }
 
 :global(.dark) .nav-tabs {
-  background-color: #1f2937;
+  background-color: transparent;
   box-shadow: 0 0 1px 0 rgba(99, 102, 241, 0.2), 0 6px 12px 0 rgba(99, 102, 241, 0.15);
 }
 
@@ -410,19 +410,19 @@ const logout = async () => {
   right: 0;
   top: calc(100% + 0.5rem);
   min-width: 200px;
-  background: #fff;
+  background: transparent;
   border-radius: 16px;
   box-shadow: 0 0 1px 0 rgba(24, 94, 224, 0.15), 
               0 10px 25px -5px rgba(24, 94, 224, 0.2),
               0 20px 25px -5px rgba(24, 94, 224, 0.1);
-  border: 1px solid #e5e7eb;
+  border: none;
   overflow: hidden;
   padding: 0.5rem;
 }
 
 :global(.dark) .user-dropdown {
-  background: #1f2937;
-  border-color: #374151;
+  background: transparent;
+  border-color: transparent;
   box-shadow: 0 0 1px 0 rgba(99, 102, 241, 0.2), 
               0 10px 25px -5px rgba(99, 102, 241, 0.3),
               0 20px 25px -5px rgba(0, 0, 0, 0.5);
@@ -594,7 +594,6 @@ const logout = async () => {
 
 /* Mobile Menu Button */
 .mobile-menu-btn {
-  display: flex;
   align-items: center;
   justify-content: center;
   width: 40px;
