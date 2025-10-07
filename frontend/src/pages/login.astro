@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LoginPage from '../components/Login.vue';
+---
+<BaseLayout title="登录 - AImagine">
+  <LoginPage client:only="vue" />
+</BaseLayout>

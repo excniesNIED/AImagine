@@ -1,0 +1,32 @@
+{
+  "name": "aimagine-frontend",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@astrojs/vue": "^4.0.8",
+    "@astrojs/tailwind": "^5.1.0",
+    "@primevue/themes": "^4.0.0",
+    "astro": "^4.5.16",
+    "primevue": "^4.0.0",
+    "vue": "^3.4.21",
+    "axios": "^1.6.8",
+    "pinia": "^2.1.7",
+    "@vueuse/core": "^10.9.0",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@astrojs/ts-plugin": "^1.5.3",
+    "@types/node": "^20.11.30",
+    "prettier": "^3.2.5",
+    "prettier-plugin-astro": "^0.13.0",
+    "typescript": "^5.4.3"
+  }
+}

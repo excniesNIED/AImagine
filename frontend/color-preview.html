@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海浪泡沫配色方案预览</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#F5FFFA',
+                            100: '#D9F1FA',
+                            200: '#CDDDFA',
+                            300: '#93A5ED',
+                            400: '#93A5ED',
+                            500: '#93A5ED',
+                            600: '#7A8ED9',
+                            700: '#6277C5',
+                            800: '#4A60B0',
+                            900: '#32499C',
+                        },
+                        secondary: {
+                            50: '#F0F5F4',
+                            100: '#E0ECEB',
+                            200: '#D0E3E2',
+                            300: '#9FBFBC',
+                            500: '#9FBFBC',
+                        },
+                        success: '#28A745',
+                        danger: '#DC3545',
+                        warning: '#FFC107',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold mb-8 text-gray-900">海浪泡沫配色方案预览</h1>
+        
+        <!-- 主色调 -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-primary-500">主色调 (Primary)</h2>
+            <div class="grid grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-primary-50 border border-gray-200"></div>
+                    <p class="mt-2 text-sm">50</p>
+                    <p class="text-xs text-gray-500">#F5FFFA</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-primary-100"></div>
+                    <p class="mt-2 text-sm">100</p>
+                    <p class="text-xs text-gray-500">#D9F1FA</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-primary-200"></div>
+                    <p class="mt-2 text-sm">200</p>
+                    <p class="text-xs text-gray-500">#CDDDFA</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-primary-500"></div>
+                    <p class="mt-2 text-sm font-bold">500 ★</p>
+                    <p class="text-xs text-gray-500">#93A5ED</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-primary-700"></div>
+                    <p class="mt-2 text-sm">700</p>
+                    <p class="text-xs text-gray-500">#6277C5</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 辅助色 -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-secondary-300">辅助色 (Secondary)</h2>
+            <div class="grid grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-secondary-50"></div>
+                    <p class="mt-2 text-sm">50</p>
+                    <p class="text-xs text-gray-500">#F0F5F4</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-secondary-100"></div>
+                    <p class="mt-2 text-sm">100</p>
+                    <p class="text-xs text-gray-500">#E0ECEB</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-secondary-200"></div>
+                    <p class="mt-2 text-sm">200</p>
+                    <p class="text-xs text-gray-500">#D0E3E2</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-secondary-300"></div>
+                    <p class="mt-2 text-sm font-bold">300 ★</p>
+                    <p class="text-xs text-gray-500">#9FBFBC</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-secondary-500"></div>
+                    <p class="mt-2 text-sm">500</p>
+                    <p class="text-xs text-gray-500">#9FBFBC</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 功能性颜色 -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">功能性颜色</h2>
+            <div class="grid grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-success"></div>
+                    <p class="mt-2 text-sm font-bold">Success</p>
+                    <p class="text-xs text-gray-500">#28A745</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-danger"></div>
+                    <p class="mt-2 text-sm font-bold">Danger</p>
+                    <p class="text-xs text-gray-500">#DC3545</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-24 rounded-lg bg-warning"></div>
+                    <p class="mt-2 text-sm font-bold">Warning</p>
+                    <p class="text-xs text-gray-500">#FFC107</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 按钮示例 -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">按钮示例</h2>
+            <div class="flex flex-wrap gap-4">
+                <button class="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
+                    主要按钮
+                </button>
+                <button class="px-4 py-2 border border-secondary-300 bg-white text-gray-700 rounded-lg hover:bg-secondary-50 transition-colors">
+                    次要按钮
+                </button>
+                <button class="px-4 py-2 bg-success text-white rounded-lg hover:opacity-90 transition-colors">
+                    成功按钮
+                </button>
+                <button class="px-4 py-2 bg-danger text-white rounded-lg hover:opacity-90 transition-colors">
+                    危险按钮
+                </button>
+                <button class="px-4 py-2 bg-warning text-gray-900 rounded-lg hover:opacity-90 transition-colors">
+                    警告按钮
+                </button>
+            </div>
+        </section>
+
+        <!-- 卡片示例 -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">卡片和标签示例</h2>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="bg-primary-100 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-primary-700 mb-2">信息卡片</h3>
+                    <p class="text-gray-700">使用浅天蓝背景的信息展示区域</p>
+                </div>
+                <div class="bg-primary-200 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-primary-800 mb-2">点缀卡片</h3>
+                    <p class="text-gray-700">使用点缀背景色的卡片区域</p>
+                </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-primary-500 text-white rounded-full text-sm">选中标签</span>
+                <span class="px-3 py-1 bg-primary-200 text-gray-700 rounded-full text-sm">普通标签</span>
+                <span class="px-3 py-1 bg-secondary-100 text-gray-700 rounded-full text-sm">辅助标签</span>
+            </div>
+        </section>
+
+        <!-- 文本示例 -->
+        <section class="mb-12 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">文本颜色</h2>
+            <p class="text-xl mb-2" style="color: #212529">主要文本颜色 (#212529)</p>
+            <p class="text-base" style="color: #6C757D">次要文本颜色 (#6C757D)</p>
+            <p class="text-base text-primary-500 mt-4">主色链接文本</p>
+            <p class="text-base text-secondary-300">辅助色文本</p>
+        </section>
+
+        <!-- Toast通知示例 -->
+        <section class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4">Toast 通知</h2>
+            <div class="space-y-3">
+                <div class="px-4 py-3 bg-success text-white rounded-lg">
+                    ✓ 操作成功！
+                </div>
+                <div class="px-4 py-3 bg-danger text-white rounded-lg">
+                    ✗ 操作失败，请重试
+                </div>
+                <div class="px-4 py-3 bg-primary-500 text-white rounded-lg">
+                    ℹ 这是一条信息提示
+                </div>
+                <div class="px-4 py-3 bg-warning text-gray-900 rounded-lg">
+                    ⚠ 请注意此警告信息
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+

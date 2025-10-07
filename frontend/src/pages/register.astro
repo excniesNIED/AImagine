@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RegisterPage from '../components/Register.vue';
+---
+<BaseLayout title="注册 - AImagine">
+  <RegisterPage client:only="vue" />
+</BaseLayout>

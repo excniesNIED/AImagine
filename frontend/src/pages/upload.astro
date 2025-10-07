@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UploadPage from '../components/Upload.vue';
+---
+<BaseLayout title="上传图片 - AImagine">
+  <UploadPage client:only="vue" />
+</BaseLayout>
