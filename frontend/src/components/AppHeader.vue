@@ -21,7 +21,7 @@
             >
               {{ item.label }}
             </a>
-            <span class="nav-glider dark:bg-gray-700" :style="{ transform: `translateX(${activeTab * 100}%)` }"></span>
+            <span class="nav-glider" :style="{ transform: `translateX(${activeTab * 100}%)` }"></span>
           </div>
         </nav>
         
@@ -72,7 +72,7 @@
             </button>
             
             <transition name="dropdown">
-              <div v-if="showUserMenu" class="user-dropdown z-50 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">
+              <div v-if="showUserMenu" class="user-dropdown z-50 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
                 <a href="/profile" class="dropdown-item">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -302,7 +302,7 @@ const logout = async () => {
 }
 
 :global(.dark) .nav-tab.active {
-  color: #818cf8;
+  color: #60a5fa; /* text-blue-400 equivalent */
 }
 
 .nav-glider {
@@ -318,7 +318,7 @@ const logout = async () => {
 }
 
 :global(.dark) .nav-glider {
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
+  background: #374151;
 }
 
 /* Theme Toggle Button */
@@ -410,19 +410,19 @@ const logout = async () => {
   right: 0;
   top: calc(100% + 0.5rem);
   min-width: 200px;
-  background: transparent;
+  background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 0 1px 0 rgba(24, 94, 224, 0.15), 
               0 10px 25px -5px rgba(24, 94, 224, 0.2),
               0 20px 25px -5px rgba(24, 94, 224, 0.1);
-  border: none;
+  border: 1px solid #e5e7eb;
   overflow: hidden;
   padding: 0.5rem;
 }
 
 :global(.dark) .user-dropdown {
-  background: transparent;
-  border-color: transparent;
+  background: #1f2937;
+  border-color: #374151;
   box-shadow: 0 0 1px 0 rgba(99, 102, 241, 0.2), 
               0 10px 25px -5px rgba(99, 102, 241, 0.3),
               0 20px 25px -5px rgba(0, 0, 0, 0.5);
@@ -457,7 +457,7 @@ const logout = async () => {
 }
 
 :global(.dark) .dropdown-item:hover {
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
+  background: #374151;
   color: #818cf8;
 }
 
