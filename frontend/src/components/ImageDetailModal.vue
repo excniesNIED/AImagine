@@ -103,8 +103,8 @@
                   </div>
 
                   <div v-if="showVersions">
-                    <div v-if="loadingVersions" class="text-center py-4">
-                      <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+                    <div v-if="loadingVersions" class="flex justify-center py-4">
+                      <LoadingAnimation />
                     </div>
 
                     <div v-else-if="versions.length <= 1" class="text-gray-500 dark:text-gray-400 text-sm">
@@ -194,6 +194,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import axios from '../utils/axios';
 import { useAuthStore } from '../stores/auth';
 import { useToast } from '../composables/useToast';
+import LoadingAnimation from './LoadingAnimation.vue';
 
 interface Image {
   id: number;

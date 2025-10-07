@@ -58,9 +58,8 @@
       </div>
       
       <!-- Gallery Grid -->
-      <div v-if="loading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-        <p class="mt-4 text-text-secondary dark:text-gray-400">加载中...</p>
+      <div v-if="loading" class="flex justify-center py-12">
+        <LoadingAnimation />
       </div>
       
       <div v-else-if="images.length === 0" class="text-center py-12">
@@ -124,6 +123,7 @@ import axios from '../utils/axios';
 import AppHeader from './AppHeader.vue';
 import ImageDetailModal from './ImageDetailModal.vue';
 import ToastContainer from './ToastContainer.vue';
+import LoadingAnimation from './LoadingAnimation.vue';
 import { useAuthStore } from '../stores/auth';
 
 interface Image {

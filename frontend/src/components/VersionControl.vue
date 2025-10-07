@@ -30,9 +30,8 @@
       </div>
 
       <!-- Search Results -->
-      <div v-if="searchLoading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-        <p class="mt-4 text-text-secondary dark:text-gray-400">搜索中...</p>
+      <div v-if="searchLoading" class="flex justify-center py-12">
+        <LoadingAnimation />
       </div>
 
       <div v-else-if="searchResults.length > 0" class="mb-8">
@@ -186,9 +185,8 @@
         </div>
       </div>
 
-      <div v-else-if="versionLoading" class="text-center py-12">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
-        <p class="mt-4 text-text-secondary dark:text-gray-400">加载版本历史...</p>
+      <div v-else-if="versionLoading" class="flex justify-center py-12">
+        <LoadingAnimation />
       </div>
 
       <div v-else-if="!selectedImage" class="text-center py-12">
@@ -222,6 +220,7 @@ import axios from '../utils/axios';
 import AppHeader from './AppHeader.vue';
 import ImageDetailModal from './ImageDetailModal.vue';
 import ToastContainer from './ToastContainer.vue';
+import LoadingAnimation from './LoadingAnimation.vue';
 
 interface Image {
   id: number;

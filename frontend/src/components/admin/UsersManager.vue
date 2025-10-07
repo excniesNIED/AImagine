@@ -4,8 +4,8 @@
       <h2 class="text-xl font-semibold">用户管理</h2>
     </div>
     <div class="p-6">
-      <div v-if="loading" class="text-center py-8">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+      <div v-if="loading" class="flex justify-center py-8">
+        <LoadingAnimation />
       </div>
       <div v-else class="overflow-x-auto">
         <table class="w-full">
@@ -76,6 +76,7 @@ import { ref, onMounted } from 'vue';
 import axios from '../../utils/axios';
 import { useToast } from '../../composables/useToast';
 import { useAuthStore } from '../../stores/auth';
+import LoadingAnimation from '../LoadingAnimation.vue';
 
 const toast = useToast();
 const authStore = useAuthStore();

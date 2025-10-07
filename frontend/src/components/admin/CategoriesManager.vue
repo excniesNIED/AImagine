@@ -21,8 +21,8 @@
         <h2 class="text-xl font-semibold">分类列表</h2>
       </div>
       <div class="p-6">
-        <div v-if="loading" class="text-center py-8">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        <div v-if="loading" class="flex justify-center py-8">
+          <LoadingAnimation />
         </div>
         <div v-else-if="categories.length === 0" class="text-center py-8 text-gray-500">
           暂无分类
@@ -106,6 +106,7 @@
 import { ref, onMounted } from 'vue';
 import axios from '../../utils/axios';
 import { useToast } from '../../composables/useToast';
+import LoadingAnimation from '../LoadingAnimation.vue';
 
 const toast = useToast();
 

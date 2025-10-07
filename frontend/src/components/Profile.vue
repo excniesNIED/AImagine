@@ -6,8 +6,8 @@
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
         <h1 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">个人资料</h1>
         
-        <div v-if="loading" class="text-center py-12">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div v-if="loading" class="flex justify-center py-12">
+          <LoadingAnimation />
         </div>
         
         <div v-else class="space-y-6">
@@ -170,6 +170,7 @@ import { ref, onMounted, computed } from 'vue';
 import axios from '../utils/axios';
 import AppHeader from './AppHeader.vue';
 import ToastContainer from './ToastContainer.vue';
+import LoadingAnimation from './LoadingAnimation.vue';
 import { useAuthStore } from '../stores/auth';
 import { useToast } from '../composables/useToast';
 

@@ -29,8 +29,8 @@
         </div>
       </div>
       <div class="p-6">
-        <div v-if="loading" class="text-center py-8">
-          <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+        <div v-if="loading" class="flex justify-center py-8">
+          <LoadingAnimation />
         </div>
         <div v-else-if="filteredTags.length === 0" class="text-center py-8 text-gray-500">
           {{ searchQuery ? '没有找到匹配的标签' : '暂无标签' }}
@@ -114,6 +114,7 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from '../../utils/axios';
 import { useToast } from '../../composables/useToast';
+import LoadingAnimation from '../LoadingAnimation.vue';
 
 const toast = useToast();
 
