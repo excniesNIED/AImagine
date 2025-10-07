@@ -16,12 +16,12 @@
               v-for="(item, index) in navItems" 
               :key="index"
               :href="item.href" 
-              :class="['nav-tab', { 'active': isActive(item.href) }]"
+              :class="['nav-tab', { 'active': isActive(item.href) }, item.href === '/square' ? 'font-bold' : '']"
               @click="activeTab = index"
             >
               {{ item.label }}
             </a>
-            <span class="nav-glider" :style="{ transform: `translateX(${activeTab * 100}%)` }"></span>
+            <span class="nav-glider dark:bg-gray-700" :style="{ transform: `translateX(${activeTab * 100}%)` }"></span>
           </div>
         </nav>
         
@@ -54,7 +54,7 @@
           </button>
           
           <!-- User Menu (hidden on mobile) -->
-          <div class="relative user-menu-container hidden md:block" v-if="user">
+          <div class="relative user-menu-container z-50 hidden md:block" v-if="user">
             <button
               @click="showUserMenu = !showUserMenu"
               class="user-menu-button"
@@ -72,7 +72,7 @@
             </button>
             
             <transition name="dropdown">
-              <div v-if="showUserMenu" class="user-dropdown bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">
+              <div v-if="showUserMenu" class="user-dropdown z-50 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700">
                 <a href="/profile" class="dropdown-item">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -111,7 +111,7 @@
 
     <!-- Mobile Navigation Menu -->
     <transition name="mobile-menu">
-      <div v-if="showMobileMenu" class="mobile-menu md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200">
+      <div v-if="showMobileMenu" class="mobile-menu md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 z-50">
         <div class="mobile-nav-container">
           <a 
             v-for="(item, index) in navItems" 
@@ -196,6 +196,7 @@ const user = computed(() => authStore.user);
 const isDark = computed(() => themeStore.isDark);
 const showUserMenu = ref(false);
 const showMobileMenu = ref(false);
+const isClient = ref(false);
 
 // Navigation items
 const navItems = [
@@ -210,15 +211,14 @@ const activeTab = ref(0);
 
 // Check if current path matches the nav item
 const isActive = (href: string) => {
-  if (typeof window !== 'undefined') {
-    const currentPath = window.location.pathname;
-    return currentPath === href || (href === '/' && currentPath === '/');
-  }
-  return false;
+  if (!isClient.value) return false;
+  const currentPath = window.location.pathname;
+  return currentPath === href || (href === '/' && currentPath === '/');
 };
 
 // Initialize active tab on mount
 onMounted(() => {
+  isClient.value = true;
   themeStore.initTheme();
   
   // Set initial active tab based on current path
