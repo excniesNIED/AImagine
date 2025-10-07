@@ -5,7 +5,7 @@
     <main class="container py-8">
       <!-- Search and Filter Bar -->
       <div class="mb-8 space-y-4">
-        <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
           <div class="flex-1">
             <input
               v-model="searchQuery"
@@ -16,27 +16,23 @@
             />
           </div>
           
-          <select
-            v-model="selectedCategory"
-            class="px-4 py-2 border border-border-light dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500"
-            @change="filterImages"
-          >
-            <option value="">所有分类</option>
-            <option v-for="category in categories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
+          <div class="flex flex-col sm:flex-row gap-4 md:flex-none md:w-auto">
+            <DropdownSelect
+              v-model="selectedCategory"
+              :options="categoryOptions"
+              placeholder="所有分类"
+              @change="filterImages"
+              class="w-full sm:w-48"
+            />
 
-          <select
-            v-model="selectedModel"
-            class="px-4 py-2 border border-border-light dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500"
-            @change="filterImages"
-          >
-            <option value="">所有模型</option>
-            <option v-for="model in models" :key="model.id" :value="model.id">
-              {{ model.name }}
-            </option>
-          </select>
+            <DropdownSelect
+              v-model="selectedModel"
+              :options="modelOptions"
+              placeholder="所有模型"
+              @change="filterImages"
+              class="w-full sm:w-48"
+            />
+          </div>
         </div>
         
         <!-- Tags Filter -->
@@ -124,6 +120,7 @@ import AppHeader from './AppHeader.vue';
 import ImageDetailModal from './ImageDetailModal.vue';
 import ToastContainer from './ToastContainer.vue';
 import LoadingAnimation from './LoadingAnimation.vue';
+import DropdownSelect from './DropdownSelect.vue';
 import { useAuthStore } from '../stores/auth';
 
 interface Image {
@@ -171,6 +168,16 @@ const selectedModel = ref('');
 const selectedTags = ref<number[]>([]);
 
 const selectedImage = ref<Image | null>(null);
+
+const categoryOptions = computed(() => {
+  const opts = categories.value.map(c => ({ value: c.id, label: c.name }));
+  return [{ value: '', label: '所有分类' }, ...opts];
+});
+
+const modelOptions = computed(() => {
+  const opts = models.value.map(m => ({ value: m.id, label: m.name }));
+  return [{ value: '', label: '所有模型' }, ...opts];
+});
 
 // Debounce search
 let searchTimeout: NodeJS.Timeout;

@@ -63,19 +63,11 @@
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           将 <strong>{{ selectedCategory?.name }}</strong> 合并到：
         </p>
-        <select
+        <DropdownSelect
           v-model="targetCategoryId"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 mb-4"
-        >
-          <option value="">选择目标分类</option>
-          <option
-            v-for="cat in categories.filter(c => c.id !== selectedCategory?.id)"
-            :key="cat.id"
-            :value="cat.id"
-          >
-            {{ cat.name }}
-          </option>
-        </select>
+          :options="mergeCategoryOptions"
+          placeholder="选择目标分类"
+        />
         <div class="flex justify-end gap-2">
           <button @click="showMergeModal = false" class="btn-secondary">取消</button>
           <button @click="confirmMerge" class="btn-primary">确认合并</button>
@@ -103,10 +95,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from '../../utils/axios';
 import { useToast } from '../../composables/useToast';
 import LoadingAnimation from '../LoadingAnimation.vue';
+import DropdownSelect from '../DropdownSelect.vue';
 
 const toast = useToast();
 
@@ -129,6 +122,12 @@ const targetCategoryId = ref<number | null>(null);
 const showEditModal = ref(false);
 const editCategoryName = ref('');
 const editingCategoryId = ref<number | null>(null);
+
+const mergeCategoryOptions = computed(() => {
+  const list = categories.value.filter(c => c.id !== selectedCategory.value?.id);
+  const opts = list.map(c => ({ value: c.id, label: c.name }));
+  return [{ value: '', label: '选择目标分类' }, ...opts];
+});
 
 const fetchCategories = async () => {
   try {

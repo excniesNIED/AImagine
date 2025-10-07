@@ -29,14 +29,14 @@
               <td class="py-3 px-4 font-medium">{{ user.username }}</td>
               <td class="py-3 px-4">
                 <select
-                  :value="user.role"
-                  @change="updateUserRole(user.id, $event.target.value)"
-                  class="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded text-sm bg-white dark:bg-gray-700"
-                  :disabled="user.id === currentUser?.id"
+                  v-if="editingUser && editingUser.id === user.id"
+                  v-model="editingUser.role"
+                  class="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                 >
-                  <option value="user">普通用户</option>
-                  <option value="admin">管理员</option>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
                 </select>
+                <span v-else>{{ user.role }}</span>
               </td>
               <td class="py-3 px-4">
                 <button

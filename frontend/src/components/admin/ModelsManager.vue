@@ -63,19 +63,11 @@
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           将 <strong>{{ selectedModel?.name }}</strong> 合并到：
         </p>
-        <select
+        <DropdownSelect
           v-model="targetModelId"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 mb-4"
-        >
-          <option value="">选择目标模型</option>
-          <option
-            v-for="model in models.filter(m => m.id !== selectedModel?.id)"
-            :key="model.id"
-            :value="model.id"
-          >
-            {{ model.name }} ({{ model.image_count || 0 }} 张图片)
-          </option>
-        </select>
+          :options="mergeModelOptions"
+          placeholder="选择目标模型"
+        />
         <div class="flex justify-end gap-2">
           <button @click="showMergeModal = false" class="btn-secondary">取消</button>
           <button @click="confirmMerge" class="btn-primary">确认合并</button>
@@ -103,10 +95,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from '../../utils/axios';
 import { useToast } from '../../composables/useToast';
 import LoadingAnimation from '../LoadingAnimation.vue';
+import DropdownSelect from '../DropdownSelect.vue';
 
 const toast = useToast();
 
@@ -129,6 +122,12 @@ const targetModelId = ref<number | null>(null);
 const showEditModal = ref(false);
 const editModelName = ref('');
 const editingModelId = ref<number | null>(null);
+
+const mergeModelOptions = computed(() => {
+  const list = models.value.filter(m => m.id !== selectedModel.value?.id);
+  const opts = list.map(m => ({ value: m.id, label: `${m.name} (${m.image_count || 0} 张图片)` }));
+  return [{ value: '', label: '选择目标模型' }, ...opts];
+});
 
 const fetchModels = async () => {
   try {

@@ -77,18 +77,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="card p-6">
             <label class="block text-lg font-semibold mb-2">AI模型 *</label>
-            <select
+            <DropdownSelect
               v-model="formData.model_id"
+              :options="modelOptions"
+              placeholder="选择模型"
               @change="onModelChange"
-              required
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-700"
-            >
-              <option value="">选择模型</option>
-              <option v-for="model in models" :key="model.id" :value="model.id">
-                {{ model.name }}
-              </option>
-              <option value="other">其他 (自定义)</option>
-            </select>
+            />
             
             <!-- Custom Model Input -->
             <input
@@ -103,18 +97,12 @@
           
           <div class="card p-6">
             <label class="block text-lg font-semibold mb-2">分类 *</label>
-            <select
+            <DropdownSelect
               v-model="formData.category_id"
+              :options="categoryOptions"
+              placeholder="选择分类"
               @change="onCategoryChange"
-              required
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-700"
-            >
-              <option value="">选择分类</option>
-              <option v-for="category in categories" :key="category.id" :value="category.id">
-                {{ category.name }}
-              </option>
-              <option value="other">其他 (自定义)</option>
-            </select>
+            />
             
             <!-- Custom Category Input -->
             <input
@@ -289,6 +277,7 @@ import AppHeader from './AppHeader.vue';
 import ToastContainer from './ToastContainer.vue';
 import { useAuthStore } from '../stores/auth';
 import { useToast } from '../composables/useToast';
+import DropdownSelect from './DropdownSelect.vue';
 
 const authStore = useAuthStore();
 const { showToast } = useToast();
@@ -310,8 +299,8 @@ const formData = ref({
   parameters: [{ key: '', value: '' }]
 });
 
-const models = ref([]);
-const categories = ref([]);
+const models = ref<any[]>([]);
+const categories = ref<any[]>([]);
 const tags = ref([]);
 const selectedTags = ref([]);
 const tagInput = ref('');
@@ -323,6 +312,16 @@ const tagInputRef = ref<HTMLInputElement>();
 
 // Check if we're creating a new version
 const isCreatingVersion = computed(() => !!parentImageId.value);
+
+const modelOptions = computed(() => {
+  const opts = models.value.map(m => ({ value: m.id, label: m.name }));
+  return [{ value: '', label: '选择模型' }, ...opts, { value: 'other', label: '其他 (自定义)' }];
+});
+
+const categoryOptions = computed(() => {
+  const opts = categories.value.map(c => ({ value: c.id, label: c.name }));
+  return [{ value: '', label: '选择分类' }, ...opts, { value: 'other', label: '其他 (自定义)' }];
+});
 
 const handleDrop = (e: DragEvent) => {
   e.preventDefault();
