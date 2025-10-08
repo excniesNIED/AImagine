@@ -1,14 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func, case, or_
+from sqlalchemy import func, case, or_, and_
 from typing import Dict, Any, List, Optional
 from app.core.database import get_db
 from app.api.deps import get_current_admin_user
-from app.models import User, Image, Category, Tag, Model, VersionHistory
+from app.models import User, Image, Category, Tag, Model, VersionHistory, KeyValueParameter
 from app.services.alist_service import alist_service
 from app.core.config_store import config_store
 from pydantic import BaseModel
 from app.schemas.image import ImageListResponse
+import json
 
 router = APIRouter()
 
@@ -210,7 +211,18 @@ async def admin_list_images(
     search: Optional[str] = None,
     category_id: Optional[int] = None,
     model_id: Optional[int] = None,
+    # Multi-select support
+    category_ids: Optional[str] = None,
+    model_ids: Optional[str] = None,
+    # Custom selections support
+    custom_category: Optional[str] = None,
+    custom_model: Optional[str] = None,
+    custom_categories: Optional[str] = None,
+    custom_models: Optional[str] = None,
     tag_ids: Optional[str] = None,
+    # Parameter filters
+    param_keys: Optional[str] = None,
+    param_filters: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_admin_user)
 ):
@@ -229,17 +241,68 @@ async def admin_list_images(
             )
         )
 
+    # Category filter (single and multi)
     if category_id:
         query = query.filter(Image.category_id == category_id)
+    if category_ids:
+        try:
+            ids = [int(x) for x in category_ids.split(',') if x.strip()]
+            if ids:
+                query = query.filter(Image.category_id.in_(ids))
+        except Exception:
+            pass
+    # Custom category (single and multi)
+    if custom_category:
+        query = query.filter(Image.custom_category == custom_category)
+    if custom_categories:
+        custom_list = [x.strip() for x in custom_categories.split(',') if x.strip()]
+        if custom_list:
+            query = query.filter(Image.custom_category.in_(custom_list))
 
+    # Model filter (single and multi)
     if model_id:
         query = query.filter(Image.model_id == model_id)
+    if model_ids:
+        try:
+            ids = [int(x) for x in model_ids.split(',') if x.strip()]
+            if ids:
+                query = query.filter(Image.model_id.in_(ids))
+        except Exception:
+            pass
+    # Custom model (single and multi)
+    if custom_model:
+        query = query.filter(Image.custom_model == custom_model)
+    if custom_models:
+        custom_list = [x.strip() for x in custom_models.split(',') if x.strip()]
+        if custom_list:
+            query = query.filter(Image.custom_model.in_(custom_list))
 
     if tag_ids:
         from app.models.tag import Tag as TagModel
         tag_id_list = [int(x) for x in tag_ids.split(',') if x.strip()]
         if tag_id_list:
             query = query.join(Image.tags).filter(TagModel.id.in_(tag_id_list)).distinct()
+
+    # Parameter filters
+    if param_keys:
+        keys = [k.strip() for k in param_keys.split(',') if k.strip()]
+        for k in keys:
+            query = query.filter(Image.parameters.any(KeyValueParameter.key == k))
+    if param_filters:
+        try:
+            kv = json.loads(param_filters)
+            if isinstance(kv, dict):
+                for k, v in kv.items():
+                    if v is None or str(v).strip() == "":
+                        query = query.filter(Image.parameters.any(KeyValueParameter.key == k))
+                    else:
+                        query = query.filter(
+                            Image.parameters.any(
+                                and_(KeyValueParameter.key == k, KeyValueParameter.value == str(v))
+                            )
+                        )
+        except Exception:
+            pass
 
     total = query.count()
     images = query.order_by(Image.created_at.desc()).offset(skip).limit(limit).all()

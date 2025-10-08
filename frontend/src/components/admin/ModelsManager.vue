@@ -56,6 +56,43 @@
       </div>
     </div>
 
+    <!-- Custom Models (from images) -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold">自定义模型（来自作品）</h2>
+        <p class="text-sm text-gray-500 mt-1">这些模型来自作品中的“自定义模型”，未在系统模型中创建</p>
+      </div>
+      <div class="p-6">
+        <div v-if="loading" class="flex justify-center py-8">
+          <LoadingAnimation />
+        </div>
+        <div v-else-if="customModels.length === 0" class="text-center py-8 text-gray-500">
+          暂无自定义模型
+        </div>
+        <div v-else class="space-y-2">
+          <div
+            v-for="item in customModels"
+            :key="item.name"
+            class="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            <div class="flex items-center gap-4">
+              <span class="font-medium">{{ item.name }}</span>
+              <span class="text-sm text-gray-500">{{ item.image_count || 0 }} 张图片</span>
+            </div>
+            <div class="flex gap-2">
+              <button
+                @click="newModelName = item.name"
+                class="px-3 py-1 text-sm bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 rounded hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors"
+                title="将此自定义模型添加到系统模型"
+              >
+                作为系统模型添加
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Merge Models Modal -->
     <div v-if="showMergeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
@@ -110,6 +147,7 @@ interface Model {
 }
 
 const models = ref<Model[]>([]);
+const customModels = ref<{ name: string; image_count: number }[]>([]);
 const loading = ref(true);
 const newModelName = ref('');
 
@@ -134,6 +172,8 @@ const fetchModels = async () => {
     loading.value = true;
     const response = await axios.get('/api/v1/models/', { params: { include_count: true } });
     models.value = response.data;
+    const customRes = await axios.get('/api/v1/models/custom', { params: { skip: 0, limit: 200 } });
+    customModels.value = customRes.data;
   } catch (error) {
     toast.error('获取模型列表失败');
     console.error('Failed to fetch models:', error);

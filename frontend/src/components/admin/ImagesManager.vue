@@ -4,8 +4,8 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <input v-model="search" type="text" placeholder="搜索提示词..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
-        <DropdownSelect v-model="filters.categoryId" :options="categoryOptions" placeholder="按分类筛选" />
-        <DropdownSelect v-model="filters.modelId" :options="modelOptions" placeholder="按模型筛选" />
+        <DropdownSelect v-model="filters.categoryIds" :options="categoryOptions" placeholder="按分类筛选" multiple clearable />
+        <DropdownSelect v-model="filters.modelIds" :options="modelOptions" placeholder="按模型筛选" multiple clearable />
         <DropdownSelect v-model="filters.tagIds" :options="tagOptions" placeholder="按标签筛选" multiple clearable />
       </div>
 
@@ -16,6 +16,11 @@
         <button @click="openAttachTags" :disabled="!hasSelection" class="btn-secondary">批量加标签</button>
         <button @click="openDetachTags" :disabled="!hasSelection" class="btn-secondary">批量移除标签</button>
         <button @click="confirmBulkDelete" :disabled="!hasSelection" class="px-4 py-2 border border-red-300 dark:border-red-600 text-sm font-medium rounded-md text-red-700 dark:text-red-200 bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">批量删除</button>
+      </div>
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+        <DropdownSelect v-model="filters.paramKeys" :options="parameterKeyOptions" placeholder="参数键（多选）" multiple clearable />
+        <DropdownSelect v-model="filters.paramFilterKey" :options="parameterKeyOptions" placeholder="参数键（精确匹配）" clearable />
+        <input v-model="filters.paramFilterValue" type="text" placeholder="参数值（可留空表示仅存在键）" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
       </div>
     </div>
 
@@ -193,7 +198,14 @@ const page = ref(1);
 const size = ref(20);
 
 const search = ref('');
-const filters = ref<{ categoryId: number | '' | null; modelId: number | '' | null; tagIds: Array<number | string> | [] }>({ categoryId: '', modelId: '', tagIds: [] });
+const filters = ref<{
+  categoryIds: Array<number | string> | [];
+  modelIds: Array<number | string> | [];
+  tagIds: Array<number | string> | [];
+  paramKeys: Array<string | number> | [];
+  paramFilterKey: string | '';
+  paramFilterValue: string | '';
+}>({ categoryIds: [], modelIds: [], tagIds: [], paramKeys: [], paramFilterKey: '', paramFilterValue: '' });
 
 const selectedIds = ref<Set<number>>(new Set());
 const hasSelection = computed(() => selectedIds.value.size > 0);
@@ -203,9 +215,21 @@ const categories = ref<{ id: number; name: string }[]>([]);
 const models = ref<{ id: number; name: string }[]>([]);
 const tags = ref<{ id: number; name: string }[]>([]);
 
-const categoryOptions = computed(() => [{ value: '', label: '全部分类' }, ...categories.value.map(c => ({ value: c.id, label: c.name }))]);
-const modelOptions = computed(() => [{ value: '', label: '全部模型' }, ...models.value.map(m => ({ value: m.id, label: m.name }))]);
+const categoryOptions = computed(() => categories.value.map(c => ({ value: c.id, label: c.name })));
+const modelOptions = computed(() => models.value.map(m => ({ value: m.id, label: m.name })));
 const tagOptions = computed(() => tags.value.map(t => ({ value: t.id, label: t.name })));
+
+// Parameter keys derived from currently loaded images
+const parameterKeyOptions = computed(() => {
+  const keys = new Set<string>();
+  items.value.forEach(img => {
+    (img.tags || []); // no-op to avoid unused var lint
+  });
+  items.value.forEach(img => {
+    (img as any).parameters?.forEach((p: any) => { if (p?.key) keys.add(p.key); });
+  });
+  return Array.from(keys).map(k => ({ value: k, label: k }));
+});
 
 const totalPages = computed(() => Math.max(1, Math.ceil(total.value / size.value)));
 
@@ -232,9 +256,15 @@ const fetchImages = async () => {
       limit: size.value,
     };
     if (search.value) params.search = search.value;
-    if (filters.value.categoryId) params.category_id = filters.value.categoryId;
-    if (filters.value.modelId) params.model_id = filters.value.modelId;
-    if (filters.value.tagIds && (filters.value.tagIds as any[]).length) params.tag_ids = (filters.value.tagIds as any[]).join(',');
+    if ((filters.value.categoryIds as any[]).length) params.category_ids = (filters.value.categoryIds as any[]).join(',');
+    if ((filters.value.modelIds as any[]).length) params.model_ids = (filters.value.modelIds as any[]).join(',');
+    if ((filters.value.tagIds as any[]).length) params.tag_ids = (filters.value.tagIds as any[]).join(',');
+    if ((filters.value.paramKeys as any[]).length) params.param_keys = (filters.value.paramKeys as any[]).join(',');
+    if (filters.value.paramFilterKey) {
+      const kv: Record<string, string> = {};
+      kv[filters.value.paramFilterKey] = (filters.value.paramFilterValue || '').toString();
+      params.param_filters = JSON.stringify(kv);
+    }
 
     const res = await axios.get('/api/v1/admin/images', { params });
     const data: ListResponse = res.data;
