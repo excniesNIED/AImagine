@@ -376,7 +376,9 @@ python scripts/init.py
 - [Astro](https://astro.build/) - 面向内容的 Web 框架
 - [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
 - [Tailwind CSS](https://tailwindcss.com/) - 实用优先的 CSS 框架
-- [Alist](https://alist.nn.ci/) - 支持多存储的文件列表程序
+- [Openlist](https://doc.oplist.org) - 支持多存储的文件列表程序
+- [UIverse - Loading Animation by dexter-st](https://uiverse.io/dexter-st/bright-lizard-8) - 开源前端加载动画组件
+- [UIverse - Button Component by Pradeepsaranbishnoi](https://uiverse.io/Pradeepsaranbishnoi/heavy-dragonfly-92) - 开源前端按钮组件
 
 ---
 
