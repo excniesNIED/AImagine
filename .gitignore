@@ -174,3 +174,5 @@ alembic/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+backend/config.toml

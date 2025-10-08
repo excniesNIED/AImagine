@@ -224,9 +224,20 @@ const testConnection = async () => {
 
 const saveSettings = async () => {
   try {
-    // Note: In a real implementation, you would save these to environment variables
-    // This is just a placeholder for the UI
-    toast.success('设置保存成功（需要重启服务器生效）');
+    // Only send non-empty values to avoid wiping existing credentials
+    const payload: Record<string, string> = {};
+    if (alistSettings.value.url && alistSettings.value.url.trim()) payload.url = alistSettings.value.url.trim();
+    if (alistSettings.value.token && alistSettings.value.token.trim()) payload.token = alistSettings.value.token.trim();
+    if (alistSettings.value.username && alistSettings.value.username.trim()) payload.username = alistSettings.value.username.trim();
+    if (alistSettings.value.password && alistSettings.value.password) payload.password = alistSettings.value.password;
+    if (alistSettings.value.uploadPath && alistSettings.value.uploadPath.trim()) payload.upload_path = alistSettings.value.uploadPath.trim();
+    await axios.post('/api/v1/admin/settings/alist', payload);
+    toast.success('设置已保存');
+    // Clear sensitive fields in UI
+    alistSettings.value.token = '';
+    alistSettings.value.password = '';
+    // Refresh display values
+    await fetchSettings();
   } catch (error) {
     toast.error('保存设置失败');
     console.error('Failed to save settings:', error);

@@ -510,15 +510,15 @@ const handleSubmit = async () => {
     // Handle model
     if (formData.value.model_id === 'other') {
       formDataToSend.append('custom_model', formData.value.custom_model);
-    } else {
-      formDataToSend.append('model_id', formData.value.model_id.toString());
+    } else if (formData.value.model_id) {
+      formDataToSend.append('model_id', String(formData.value.model_id));
     }
     
     // Handle category
     if (formData.value.category_id === 'other') {
       formDataToSend.append('custom_category', formData.value.custom_category);
-    } else {
-      formDataToSend.append('category_id', formData.value.category_id.toString());
+    } else if (formData.value.category_id) {
+      formDataToSend.append('category_id', String(formData.value.category_id));
     }
     
     formDataToSend.append('tag_ids', selectedTags.value.map(t => t.id).join(','));
@@ -537,7 +537,7 @@ const handleSubmit = async () => {
     });
     formDataToSend.append('parameters', JSON.stringify(params));
 
-    const response = await axios.post('/api/v1/images', formDataToSend);
+    const response = await axios.post('/api/v1/images/', formDataToSend);
     
     showToast('上传成功！', 'success');
     window.location.href = '/';

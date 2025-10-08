@@ -6,6 +6,8 @@ from app.core.database import get_db
 from app.api.deps import get_current_admin_user
 from app.models import User, Image, Category, Tag, Model
 from app.services.alist_service import alist_service
+from app.core.config_store import config_store
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -48,14 +50,61 @@ async def admin_dashboard(
 async def get_settings(
     current_user = Depends(get_current_admin_user)
 ):
+    # Read directly from TOML to avoid hiding persisted password/token
+    stored = config_store.get_section("alist")
+    url = (stored.get("url") or "").strip()
+    username = (stored.get("username") or "").strip()
+    upload_path = (stored.get("upload_path") or "/gallery").strip()
+    has_token = bool((stored.get("token") or "").strip())
+    has_password = isinstance(stored.get("password"), str) and stored.get("password") != ""
     return {
         "alist": {
-            "url": alist_service.base_url,
-            "username": alist_service.username,
-            "upload_path": alist_service.upload_path,
-            "configured": bool(alist_service.token or alist_service.username)
+            "url": url,
+            "username": username,
+            "upload_path": upload_path,
+            "configured": has_token or (username and has_password),
+            "has_token": has_token,
+            "has_password": has_password
         }
     }
+
+
+class AlistSettingsUpdate(BaseModel):
+    url: str | None = None
+    token: str | None = None
+    username: str | None = None
+    password: str | None = None
+    upload_path: str | None = None
+
+
+@router.post("/settings/alist")
+async def update_alist_settings(
+    payload: AlistSettingsUpdate,
+    current_user = Depends(get_current_admin_user)
+):
+    # Persist to TOML config
+    update_values = {}
+    if payload.url is not None and payload.url.strip():
+        update_values["url"] = payload.url.strip()
+    if payload.token is not None and payload.token.strip():
+        update_values["token"] = payload.token.strip()
+    if payload.username is not None and payload.username.strip():
+        update_values["username"] = payload.username.strip()
+    if payload.password is not None and payload.password:
+        update_values["password"] = payload.password
+    if payload.upload_path is not None and payload.upload_path.strip():
+        # Normalize to leading '/' and no trailing slash
+        path = "/" + payload.upload_path.strip().strip("/")
+        update_values["upload_path"] = path
+
+    if update_values:
+        config_store.update_section("alist", update_values)
+
+    # Refresh running alist_service values from the store
+    stored = config_store.get_section("alist")
+    alist_service.refresh_from_store()
+
+    return {"message": "Alist settings updated", "alist": stored}
 
 
 @router.post("/settings/test-alist")

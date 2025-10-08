@@ -267,9 +267,9 @@ const formatDate = (dateString: string) => {
 onMounted(async () => {
   try {
     const [categoriesRes, modelsRes, tagsRes] = await Promise.all([
-      axios.get('/api/v1/categories'),
-      axios.get('/api/v1/models'),
-      axios.get('/api/v1/tags')
+      axios.get('/api/v1/categories/'),
+      axios.get('/api/v1/models/'),
+      axios.get('/api/v1/tags/')
     ]);
 
     categories.value = categoriesRes.data;

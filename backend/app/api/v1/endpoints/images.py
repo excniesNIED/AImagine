@@ -167,20 +167,37 @@ async def upload_image(
     # Generate unique filename
     file_ext = os.path.splitext(file.filename)[1]
     unique_filename = f"{uuid.uuid4()}{file_ext}"
-    
+
+    # Get image dimensions BEFORE uploading (to avoid exhausted stream)
+    width = None
+    height = None
+    try:
+        from PIL import Image as PILImage
+        import io
+        image_data = await file.read()
+        img = PILImage.open(io.BytesIO(image_data))
+        width, height = img.size
+        await file.seek(0)  # Reset file pointer for upload
+    except Exception:
+        pass
+
     # Upload to Alist
     try:
+        print(
+            f"[Upload] user={current_user.id} filename={unique_filename} size_hint={getattr(file, 'size', 'n/a')} upload_path_hint={getattr(alist_service, 'upload_path', 'n/a')}"
+        )
         upload_result = await alist_service.upload_file(
             file=file,
             filename=unique_filename,
             subfolder=str(current_user.id)
         )
     except Exception as e:
+        print(f"[Upload] alist error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to upload file: {str(e)}"
         )
-    
+
     # Parse parameters
     params_list = []
     if parameters:
@@ -196,19 +213,6 @@ async def upload_image(
     tag_ids_list = []
     if tag_ids:
         tag_ids_list = [int(x) for x in tag_ids.split(',') if x.strip()]
-    
-    # Get image dimensions
-    width = None
-    height = None
-    try:
-        from PIL import Image as PILImage
-        import io
-        image_data = await file.read()
-        img = PILImage.open(io.BytesIO(image_data))
-        width, height = img.size
-        await file.seek(0)  # Reset file pointer
-    except:
-        pass
     
     # Create image record
     db_image = Image(

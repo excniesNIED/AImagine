@@ -1,6 +1,9 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import datetime
+from .model import ModelResponse
+from .category import CategoryResponse
+from .tag import TagResponse
 
 
 class KeyValueParameterBase(BaseModel):
@@ -83,9 +86,9 @@ class ImageResponse(BaseModel):
     updated_at: Optional[datetime] = None
     
     # Nested relationships
-    model: Optional[dict] = None
-    category: Optional[dict] = None
-    tags: List[dict] = []
+    model: Optional[ModelResponse] = None
+    category: Optional[CategoryResponse] = None
+    tags: List[TagResponse] = []
     parameters: List[KeyValueParameterResponse] = []
 
 

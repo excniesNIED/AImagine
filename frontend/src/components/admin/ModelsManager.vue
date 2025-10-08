@@ -132,7 +132,7 @@ const mergeModelOptions = computed(() => {
 const fetchModels = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('/api/v1/models');
+    const response = await axios.get('/api/v1/models/');
     models.value = response.data;
   } catch (error) {
     toast.error('获取模型列表失败');
@@ -144,13 +144,20 @@ const fetchModels = async () => {
 
 const addModel = async () => {
   try {
-    await axios.post('/api/v1/models', { name: newModelName.value });
+    await axios.post('/api/v1/models/', { name: newModelName.value });
     toast.success('模型添加成功');
     newModelName.value = '';
     fetchModels();
-  } catch (error) {
-    toast.error('添加模型失败');
+  } catch (error: any) {
     console.error('Failed to add model:', error);
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      setTimeout(() => (window.location.href = '/login'), 800);
+    } else if (error.response?.data?.detail?.includes('exists')) {
+      toast.error('模型已存在');
+    } else {
+      toast.error('添加模型失败');
+    }
   }
 };
 
@@ -164,15 +171,22 @@ const confirmEdit = async () => {
   if (!editingModelId.value) return;
 
   try {
-    await axios.put(`/api/v1/models/${editingModelId.value}`, {
+    await axios.put(`/api/v1/models/${editingModelId.value}/`, {
       name: editModelName.value
     });
     toast.success('模型更新成功');
     showEditModal.value = false;
     fetchModels();
-  } catch (error) {
-    toast.error('更新模型失败');
+  } catch (error: any) {
     console.error('Failed to update model:', error);
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      setTimeout(() => (window.location.href = '/login'), 800);
+    } else if (error.response?.data?.detail?.includes('exists')) {
+      toast.error('模型名称已存在');
+    } else {
+      toast.error('更新模型失败');
+    }
   }
 };
 
@@ -180,12 +194,17 @@ const deleteModel = async (modelId: number) => {
   if (!confirm('确定要删除这个模型吗？')) return;
 
   try {
-    await axios.delete(`/api/v1/models/${modelId}`);
+    await axios.delete(`/api/v1/models/${modelId}/`);
     toast.success('模型删除成功');
     fetchModels();
-  } catch (error) {
-    toast.error('删除模型失败');
+  } catch (error: any) {
     console.error('Failed to delete model:', error);
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      setTimeout(() => (window.location.href = '/login'), 800);
+    } else {
+      toast.error('删除模型失败');
+    }
   }
 };
 

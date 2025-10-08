@@ -132,7 +132,7 @@ const mergeCategoryOptions = computed(() => {
 const fetchCategories = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('/api/v1/categories');
+    const response = await axios.get('/api/v1/categories/');
     categories.value = response.data;
   } catch (error) {
     toast.error('获取分类列表失败');
@@ -144,13 +144,20 @@ const fetchCategories = async () => {
 
 const addCategory = async () => {
   try {
-    await axios.post('/api/v1/categories', { name: newCategoryName.value });
+    await axios.post('/api/v1/categories/', { name: newCategoryName.value });
     toast.success('分类添加成功');
     newCategoryName.value = '';
     fetchCategories();
-  } catch (error) {
-    toast.error('添加分类失败');
+  } catch (error: any) {
     console.error('Failed to add category:', error);
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      setTimeout(() => (window.location.href = '/login'), 800);
+    } else if (error.response?.data?.detail?.includes('exists')) {
+      toast.error('分类已存在');
+    } else {
+      toast.error('添加分类失败');
+    }
   }
 };
 
@@ -164,15 +171,22 @@ const confirmEdit = async () => {
   if (!editingCategoryId.value) return;
 
   try {
-    await axios.put(`/api/v1/categories/${editingCategoryId.value}`, {
+    await axios.put(`/api/v1/categories/${editingCategoryId.value}/`, {
       name: editCategoryName.value
     });
     toast.success('分类更新成功');
     showEditModal.value = false;
     fetchCategories();
-  } catch (error) {
-    toast.error('更新分类失败');
+  } catch (error: any) {
     console.error('Failed to update category:', error);
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      setTimeout(() => (window.location.href = '/login'), 800);
+    } else if (error.response?.data?.detail?.includes('exists')) {
+      toast.error('分类名称已存在');
+    } else {
+      toast.error('更新分类失败');
+    }
   }
 };
 
@@ -180,12 +194,17 @@ const deleteCategory = async (categoryId: number) => {
   if (!confirm('确定要删除这个分类吗？')) return;
 
   try {
-    await axios.delete(`/api/v1/categories/${categoryId}`);
+    await axios.delete(`/api/v1/categories/${categoryId}/`);
     toast.success('分类删除成功');
     fetchCategories();
-  } catch (error) {
-    toast.error('删除分类失败');
+  } catch (error: any) {
     console.error('Failed to delete category:', error);
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      setTimeout(() => (window.location.href = '/login'), 800);
+    } else {
+      toast.error('删除分类失败');
+    }
   }
 };
 

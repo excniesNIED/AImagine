@@ -233,7 +233,7 @@ const fetchImages = async () => {
 
 const fetchCategories = async () => {
   try {
-    const response = await axios.get('/api/v1/categories');
+    const response = await axios.get('/api/v1/categories/');
     categories.value = response.data;
   } catch (error) {
     console.error('Failed to fetch categories:', error);
@@ -242,7 +242,7 @@ const fetchCategories = async () => {
 
 const fetchModels = async () => {
   try {
-    const response = await axios.get('/api/v1/models');
+    const response = await axios.get('/api/v1/models/');
     models.value = response.data;
   } catch (error) {
     console.error('Failed to fetch models:', error);
@@ -251,7 +251,7 @@ const fetchModels = async () => {
 
 const fetchTags = async () => {
   try {
-    const response = await axios.get('/api/v1/tags');
+    const response = await axios.get('/api/v1/tags/');
     tags.value = response.data;
   } catch (error) {
     console.error('Failed to fetch tags:', error);
