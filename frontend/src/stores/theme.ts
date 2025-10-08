@@ -1,36 +1,66 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 export const useThemeStore = defineStore('theme', () => {
-  const isDark = ref(false);
-  
+  // State
+  const isDark = ref(false)
+
+  // Getters
+  const theme = computed(() => isDark.value ? 'dark' : 'light')
+
+  // Actions
   const initTheme = () => {
-    if (typeof window === 'undefined') return;
-    
-    const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    isDark.value = saved === 'dark' || (!saved && prefersDark);
-    applyTheme();
-  };
-  
+    // Check localStorage first
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme) {
+      isDark.value = savedTheme === 'dark'
+    } else {
+      // Check system preference
+      isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+    }
+    applyTheme()
+  }
+
   const toggleTheme = () => {
-    isDark.value = !isDark.value;
-    applyTheme();
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
-    }
-  };
-  
+    isDark.value = !isDark.value
+    applyTheme()
+    saveTheme()
+  }
+
+  const setTheme = (theme: 'light' | 'dark') => {
+    isDark.value = theme === 'dark'
+    applyTheme()
+    saveTheme()
+  }
+
   const applyTheme = () => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', isDark.value);
+    const root = document.documentElement
+    if (isDark.value) {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
     }
-  };
-  
+  }
+
+  const saveTheme = () => {
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  }
+
+  // Watch for system theme changes
+  if (typeof window !== 'undefined') {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        isDark.value = e.matches
+        applyTheme()
+      }
+    })
+  }
+
   return {
     isDark,
+    theme,
     initTheme,
     toggleTheme,
-  };
-});
+    setTheme
+  }
+})

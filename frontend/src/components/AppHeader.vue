@@ -220,7 +220,7 @@ const isActive = (href: string) => {
 onMounted(() => {
   isClient.value = true;
   themeStore.initTheme();
-  
+
   // Set initial active tab based on current path
   const currentPath = window.location.pathname;
   const index = navItems.findIndex(item => item.href === currentPath);
@@ -258,10 +258,10 @@ const logout = async () => {
   gap: 0.25rem;
 }
 
-:global(.dark) .nav-tabs {
-  background-color: transparent;
-  box-shadow: 0 0 1px 0 rgba(99, 102, 241, 0.2), 0 6px 12px 0 rgba(99, 102, 241, 0.15);
+.dark .nav-tabs {
+  box-shadow: 0 0 1px 0 rgba(147, 197, 253, 0.3), 0 6px 12px 0 rgba(30, 58, 138, 0.3);
 }
+
 
 .nav-tabs * {
   z-index: 2;
@@ -284,16 +284,16 @@ const logout = async () => {
   position: relative;
 }
 
-:global(.dark) .nav-tab {
-  color: #9ca3af;
+.dark .nav-tab {
+  color: #e5e7eb;
 }
 
 .nav-tab:hover {
   color: #185ee0;
 }
 
-:global(.dark) .nav-tab:hover {
-  color: #818cf8;
+.dark .nav-tab:hover {
+  color: #60a5fa;
 }
 
 .nav-tab.active {
@@ -301,9 +301,10 @@ const logout = async () => {
   font-weight: 600;
 }
 
-:global(.dark) .nav-tab.active {
-  color: #60a5fa; /* text-blue-400 equivalent */
+.dark .nav-tab.active {
+  color: #60a5fa;
 }
+
 
 .nav-glider {
   position: absolute;
@@ -317,9 +318,10 @@ const logout = async () => {
   left: 0.5rem;
 }
 
-:global(.dark) .nav-glider {
-  background: #374151;
+.dark .nav-glider {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
 }
+
 
 /* Theme Toggle Button */
 .theme-toggle {
@@ -338,7 +340,7 @@ const logout = async () => {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
-:global(.dark) .theme-toggle {
+.dark .theme-toggle {
   color: #9ca3af;
   background-color: #374151;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
@@ -350,11 +352,11 @@ const logout = async () => {
   transform: scale(1.05);
 }
 
-:global(.dark) .theme-toggle:hover {
-  color: #818cf8;
+.dark .theme-toggle:hover {
+  color: #60a5fa;
   background-color: #4b5563;
-  transform: scale(1.05);
 }
+
 
 .theme-toggle:active {
   transform: scale(0.95);
@@ -380,11 +382,11 @@ const logout = async () => {
   font-weight: 500;
 }
 
-:global(.dark) .user-menu-button {
+.dark .user-menu-button {
   background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
   border-color: #4b5563;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
   color: #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .user-menu-button:hover {
@@ -394,11 +396,12 @@ const logout = async () => {
   box-shadow: 0 4px 6px -1px rgba(24, 94, 224, 0.1);
 }
 
-:global(.dark) .user-menu-button:hover {
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-  border-color: #818cf8;
-  box-shadow: 0 4px 6px -1px rgba(129, 140, 248, 0.2);
+.dark .user-menu-button:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-color: #60a5fa;
+  box-shadow: 0 4px 6px -1px rgba(96, 165, 250, 0.2);
 }
+
 
 .user-menu-button:active {
   transform: translateY(0);
@@ -412,7 +415,7 @@ const logout = async () => {
   min-width: 200px;
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 0 1px 0 rgba(24, 94, 224, 0.15), 
+  box-shadow: 0 0 1px 0 rgba(24, 94, 224, 0.15),
               0 10px 25px -5px rgba(24, 94, 224, 0.2),
               0 20px 25px -5px rgba(24, 94, 224, 0.1);
   border: 1px solid #e5e7eb;
@@ -420,12 +423,12 @@ const logout = async () => {
   padding: 0.5rem;
 }
 
-:global(.dark) .user-dropdown {
+.dark .user-dropdown {
   background: #1f2937;
-  border-color: #374151;
-  box-shadow: 0 0 1px 0 rgba(99, 102, 241, 0.2), 
-              0 10px 25px -5px rgba(99, 102, 241, 0.3),
-              0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  border-color: #4b5563;
+  box-shadow: 0 0 1px 0 rgba(147, 197, 253, 0.3),
+              0 10px 25px -5px rgba(30, 58, 138, 0.4),
+              0 20px 25px -5px rgba(30, 58, 138, 0.2);
 }
 
 .dropdown-item {
@@ -446,7 +449,7 @@ const logout = async () => {
   font-weight: 500;
 }
 
-:global(.dark) .dropdown-item {
+.dark .dropdown-item {
   color: #e5e7eb;
 }
 
@@ -456,10 +459,11 @@ const logout = async () => {
   transform: translateX(2px);
 }
 
-:global(.dark) .dropdown-item:hover {
-  background: #374151;
-  color: #818cf8;
+.dark .dropdown-item:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  color: #60a5fa;
 }
+
 
 .dropdown-item svg {
   flex-shrink: 0;
@@ -474,8 +478,8 @@ const logout = async () => {
   color: #dc2626;
 }
 
-:global(.dark) .logout-item {
-  color: #f87171;
+.dark .logout-item {
+  color: #ef4444;
 }
 
 .logout-item:hover {
@@ -483,7 +487,7 @@ const logout = async () => {
   color: #991b1b;
 }
 
-:global(.dark) .logout-item:hover {
+.dark .logout-item:hover {
   background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
   color: #fca5a5;
 }
@@ -494,9 +498,10 @@ const logout = async () => {
   background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
 }
 
-:global(.dark) .dropdown-divider {
+.dark .dropdown-divider {
   background: linear-gradient(90deg, transparent, #4b5563, transparent);
 }
+
 
 /* Dropdown Animation */
 .dropdown-enter-active {
@@ -550,10 +555,11 @@ const logout = async () => {
   border-color: #185ee0;
 }
 
-:global(.dark) .auth-btn-login {
+.dark .auth-btn-login {
   background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-  color: #818cf8;
-  border-color: #818cf8;
+  color: #60a5fa;
+  border-color: #3b82f6;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 .auth-btn-login:hover {
@@ -562,19 +568,14 @@ const logout = async () => {
   box-shadow: 0 4px 6px -1px rgba(24, 94, 224, 0.2);
 }
 
-:global(.dark) .auth-btn-login:hover {
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-  box-shadow: 0 4px 6px -1px rgba(129, 140, 248, 0.3);
+.dark .auth-btn-login:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
 }
 
 .auth-btn-register {
   background: linear-gradient(135deg, #185ee0 0%, #1d4ed8 100%);
   color: #fff;
-}
-
-:global(.dark) .auth-btn-register {
-  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-  color: #1f2937;
 }
 
 .auth-btn-register:hover {
@@ -583,10 +584,10 @@ const logout = async () => {
   box-shadow: 0 4px 6px -1px rgba(24, 94, 224, 0.4);
 }
 
-:global(.dark) .auth-btn-register:hover {
-  background: linear-gradient(135deg, #818cf8 0%, #a5b4fc 100%);
-  box-shadow: 0 4px 6px -1px rgba(129, 140, 248, 0.5);
+.dark .auth-btn-register:hover {
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
 }
+
 
 .auth-btn:active {
   transform: translateY(0);
@@ -608,8 +609,8 @@ const logout = async () => {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
 
-:global(.dark) .mobile-menu-btn {
-  color: #e5e7eb;
+.dark .mobile-menu-btn {
+  color: #9ca3af;
   background-color: #374151;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
@@ -620,10 +621,11 @@ const logout = async () => {
   transform: scale(1.05);
 }
 
-:global(.dark) .mobile-menu-btn:hover {
+.dark .mobile-menu-btn:hover {
   background-color: #4b5563;
-  color: #818cf8;
+  color: #60a5fa;
 }
+
 
 .mobile-menu-btn:active {
   transform: scale(0.95);
@@ -641,10 +643,10 @@ const logout = async () => {
   z-index: 50;
 }
 
-:global(.dark) .mobile-menu {
+.dark .mobile-menu {
   background: #1f2937;
-  border-top-color: #374151;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  border-top-color: #4b5563;
+  box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
 }
 
 .mobile-nav-container {
@@ -668,10 +670,11 @@ const logout = async () => {
   overflow: hidden;
 }
 
-:global(.dark) .mobile-nav-item {
+.dark .mobile-nav-item {
   color: #e5e7eb;
   background: #374151;
 }
+
 
 .mobile-nav-item::before {
   content: '';
@@ -685,9 +688,6 @@ const logout = async () => {
   transition: transform 0.2s ease-in-out;
 }
 
-:global(.dark) .mobile-nav-item::before {
-  background: linear-gradient(180deg, #6366f1 0%, #818cf8 100%);
-}
 
 .mobile-nav-item.active::before {
   transform: scaleY(1);
@@ -699,9 +699,9 @@ const logout = async () => {
   font-weight: 600;
 }
 
-:global(.dark) .mobile-nav-item.active {
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
-  color: #818cf8;
+.dark .mobile-nav-item.active {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  color: #60a5fa;
 }
 
 .mobile-nav-item:hover {
@@ -710,10 +710,11 @@ const logout = async () => {
   transform: translateX(4px);
 }
 
-:global(.dark) .mobile-nav-item:hover {
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
-  color: #818cf8;
+.dark .mobile-nav-item:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  color: #60a5fa;
 }
+
 
 /* Mobile User Section */
 .mobile-user-section,
@@ -733,9 +734,9 @@ const logout = async () => {
   margin-bottom: 0.5rem;
 }
 
-:global(.dark) .mobile-user-info {
-  color: #818cf8;
-  background: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
+.dark .mobile-user-info {
+  color: #60a5fa;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
 }
 
 .mobile-divider {
@@ -744,7 +745,7 @@ const logout = async () => {
   background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
 }
 
-:global(.dark) .mobile-divider {
+.dark .mobile-divider {
   background: linear-gradient(90deg, transparent, #4b5563, transparent);
 }
 
@@ -756,8 +757,8 @@ const logout = async () => {
   cursor: pointer;
 }
 
-:global(.dark) .logout-mobile {
-  color: #f87171;
+.dark .logout-mobile {
+  color: #ef4444;
 }
 
 .logout-mobile:hover {
@@ -765,10 +766,11 @@ const logout = async () => {
   color: #991b1b;
 }
 
-:global(.dark) .logout-mobile:hover {
+.dark .logout-mobile:hover {
   background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
   color: #fca5a5;
 }
+
 
 /* Mobile Menu Animation */
 .mobile-menu-enter-active {
