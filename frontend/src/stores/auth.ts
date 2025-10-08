@@ -35,7 +35,8 @@ const removeStoredToken = () => {
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
   const token = ref<string | null>(getStoredToken());
-  
+  const isLoading = ref(false);
+
   const isAuthenticated = computed(() => !!token.value);
   const isAdmin = computed(() => user.value?.role === 'admin');
   
@@ -90,7 +91,9 @@ export const useAuthStore = defineStore('auth', () => {
   
   const fetchProfile = async () => {
     if (!token.value) return;
-    
+
+    isLoading.value = true;
+
     try {
       const response = await axios.get('/api/v1/users/me');
       user.value = response.data;
@@ -105,6 +108,8 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = null;
       user.value = null;
       return false;
+    } finally {
+      isLoading.value = false;
     }
   };
   
@@ -120,6 +125,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     token,
+    isLoading,
     isAuthenticated,
     isAdmin,
     login,

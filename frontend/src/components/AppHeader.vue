@@ -54,56 +54,66 @@
           </button>
           
           <!-- User Menu (hidden on mobile) -->
-          <div class="relative user-menu-container z-50 hidden md:block" v-if="user">
-            <button
-              @click="showUserMenu = !showUserMenu"
-              class="user-menu-button"
-            >
-              <span class="text-sm font-medium">{{ user.username }}</span>
-              <svg 
-                class="w-4 h-4 transition-transform duration-200" 
-                :class="{ 'rotate-180': showUserMenu }"
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </button>
-            
-            <transition name="dropdown">
-              <div v-if="showUserMenu" class="user-dropdown z-50 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
-                <a href="/profile" class="dropdown-item">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                  </svg>
-                  个人资料
-                </a>
-                <a v-if="user.role === 'admin'" href="/admin" class="dropdown-item">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                  管理后台
-                </a>
-                <div class="dropdown-divider"></div>
+          <div class="relative user-menu-container z-50 hidden md:block" v-show="user && isClient">
+            <transition name="auth-fade">
+              <div v-if="!authLoading" class="auth-content">
                 <button
-                  @click="logout"
-                  class="dropdown-item logout-item"
+                  @click="showUserMenu = !showUserMenu"
+                  class="user-menu-button"
                 >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                  <span class="text-sm font-medium">{{ user.username }}</span>
+                  <svg
+                    class="w-4 h-4 transition-transform duration-200"
+                    :class="{ 'rotate-180': showUserMenu }"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
-                  退出登录
                 </button>
+
+                <transition name="dropdown">
+                  <div v-if="showUserMenu" class="user-dropdown z-50 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg">
+                    <a href="/profile" class="dropdown-item">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                      </svg>
+                      个人资料
+                    </a>
+                    <a v-if="user.role === 'admin'" href="/admin" class="dropdown-item">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      </svg>
+                      管理后台
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <button
+                      @click="logout"
+                      class="dropdown-item logout-item"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                      </svg>
+                      退出登录
+                    </button>
+                  </div>
+                </transition>
               </div>
             </transition>
           </div>
-          
+
           <!-- Auth buttons (hidden on mobile) -->
-          <div v-else class="hidden md:flex space-x-2">
+          <div v-show="(!user || !isClient) && !authLoading" class="hidden md:flex space-x-2 auth-content">
             <a href="/login" class="auth-btn auth-btn-login">登录</a>
             <a href="/register" class="auth-btn auth-btn-register">注册</a>
+          </div>
+
+          <!-- Loading placeholder -->
+          <div v-if="authLoading && isClient" class="hidden md:flex space-x-2">
+            <div class="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+            <div class="w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -197,6 +207,7 @@ const isDark = computed(() => themeStore.isDark);
 const showUserMenu = ref(false);
 const showMobileMenu = ref(false);
 const isClient = ref(false);
+const authLoading = ref(true);
 
 // Navigation items
 const navItems = [
@@ -217,7 +228,7 @@ const isActive = (href: string) => {
 };
 
 // Initialize active tab on mount
-onMounted(() => {
+onMounted(async () => {
   isClient.value = true;
   themeStore.initTheme();
 
@@ -227,6 +238,16 @@ onMounted(() => {
   if (index !== -1) {
     activeTab.value = index;
   }
+
+  // Check authentication state
+  if (authStore.token) {
+    await authStore.fetchProfile();
+  }
+
+  // Short delay to prevent flash
+  setTimeout(() => {
+    authLoading.value = false;
+  }, 50);
 });
 
 const toggleTheme = () => {
@@ -808,6 +829,17 @@ const logout = async () => {
   .nav-tabs {
     transform: scale(0.85);
   }
+}
+
+/* Auth state transition */
+.auth-fade-enter-active,
+.auth-fade-leave-active {
+  transition: opacity 0.15s ease-in-out;
+}
+
+.auth-fade-enter-from,
+.auth-fade-leave-to {
+  opacity: 0;
 }
 
 /* Hide mobile menu button in landscape orientation on small screens */

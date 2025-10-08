@@ -37,8 +37,10 @@ export const useThemeStore = defineStore('theme', () => {
     const root = document.documentElement
     if (isDark.value) {
       root.classList.add('dark')
+      root.setAttribute('data-theme', 'dark')
     } else {
       root.classList.remove('dark')
+      root.setAttribute('data-theme', 'light')
     }
   }
 
