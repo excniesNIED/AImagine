@@ -9,18 +9,22 @@
         <DropdownSelect v-model="filters.tagIds" :options="tagOptions" placeholder="按标签筛选" multiple clearable />
       </div>
 
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button @click="fetchImages" class="btn-primary">刷新</button>
-        <button @click="openReassignCategory" :disabled="!hasSelection" class="btn-secondary">批量改分类</button>
-        <button @click="openReassignModel" :disabled="!hasSelection" class="btn-secondary">批量改模型</button>
-        <button @click="openAttachTags" :disabled="!hasSelection" class="btn-secondary">批量加标签</button>
-        <button @click="openDetachTags" :disabled="!hasSelection" class="btn-secondary">批量移除标签</button>
-        <button @click="confirmBulkDelete" :disabled="!hasSelection" class="px-4 py-2 border border-red-300 dark:border-red-600 text-sm font-medium rounded-md text-red-700 dark:text-red-200 bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">批量删除</button>
-      </div>
       <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
         <DropdownSelect v-model="filters.paramKeys" :options="parameterKeyOptions" placeholder="参数键（多选）" multiple clearable />
         <DropdownSelect v-model="filters.paramFilterKey" :options="parameterKeyOptions" placeholder="参数键（精确匹配）" clearable />
         <input v-model="filters.paramFilterValue" type="text" placeholder="参数值（可留空表示仅存在键）" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700" />
+      </div>
+    </div>
+
+    <!-- Actions moved below parameter filters -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+      <div class="flex flex-wrap gap-2">
+        <button @click="fetchImages" class="btn-primary">刷新</button>
+        <button @click="openReassignCategory" :disabled="!hasSelection" class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed">批量改分类</button>
+        <button @click="openReassignModel" :disabled="!hasSelection" class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed">批量改模型</button>
+        <button @click="openAttachTags" :disabled="!hasSelection" class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed">批量加标签</button>
+        <button @click="openDetachTags" :disabled="!hasSelection" class="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed">批量移除标签</button>
+        <button @click="confirmBulkDelete" :disabled="!hasSelection" class="px-4 py-2 border border-red-300 dark:border-red-600 text-sm font-medium rounded-md text-red-700 dark:text-red-200 bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">批量删除</button>
       </div>
     </div>
 
@@ -40,7 +44,12 @@
           <thead class="bg-gray-50 dark:bg-gray-700/50">
             <tr>
               <th class="px-4 py-3">
-                <input type="checkbox" :checked="allSelected" @change="toggleSelectAll" />
+                <input
+                  type="checkbox"
+                  :checked="allSelected"
+                  @change="toggleSelectAll"
+                  class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 accent-primary-600 dark:accent-primary-400 focus:ring-2 focus:ring-primary-500 transition-colors"
+                />
               </th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">预览</th>
               <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">提示词</th>
@@ -54,7 +63,12 @@
           <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             <tr v-for="img in items" :key="img.id">
               <td class="px-4 py-3">
-                <input type="checkbox" :checked="selectedIds.has(img.id)" @change="toggleSelect(img.id)" />
+                <input
+                  type="checkbox"
+                  :checked="selectedIds.has(img.id)"
+                  @change="toggleSelect(img.id)"
+                  class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 accent-primary-600 dark:accent-primary-400 focus:ring-2 focus:ring-primary-500 transition-colors"
+                />
               </td>
               <td class="px-4 py-3">
                 <img :src="img.alist_url" :alt="img.prompt" class="w-16 h-16 object-cover rounded" />
