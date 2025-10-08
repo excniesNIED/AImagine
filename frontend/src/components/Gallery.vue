@@ -80,7 +80,7 @@
             <div class="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-200">
               <p class="text-sm line-clamp-2">{{ image.prompt }}</p>
               <div class="flex items-center justify-between mt-2 text-xs">
-                <span>{{ image.model.name }}</span>
+                <span>{{ image.model?.name || (image as any).custom_model || '未知模型' }}</span>
                 <span>{{ formatDate(image.created_at) }}</span>
               </div>
             </div>
@@ -130,8 +130,10 @@ interface Image {
   alist_url: string;
   created_at: string;
   owner_id: number;
-  model: { id: number; name: string };
-  category: { id: number; name: string };
+  model: { id: number; name: string } | null;
+  category: { id: number; name: string } | null;
+  custom_model?: string;
+  custom_category?: string;
   tags: { id: number; name: string }[];
   parameters: { key: string; value: string }[];
 }
@@ -170,13 +172,21 @@ const selectedTags = ref<number[]>([]);
 const selectedImage = ref<Image | null>(null);
 
 const categoryOptions = computed(() => {
-  const opts = categories.value.map(c => ({ value: c.id, label: c.name }));
-  return [{ value: '', label: '所有分类' }, ...opts];
+  const base = categories.value.map(c => ({ value: c.id, label: c.name }));
+  const customLabels = Array.from(new Set(
+    images.value.map(img => (img as any).custom_category).filter(Boolean)
+  ));
+  const customOpts = (customLabels as string[]).map(label => ({ value: `custom:${label}`, label: `${label} (自定义)` }));
+  return [{ value: '', label: '所有分类' }, ...base, ...customOpts];
 });
 
 const modelOptions = computed(() => {
-  const opts = models.value.map(m => ({ value: m.id, label: m.name }));
-  return [{ value: '', label: '所有模型' }, ...opts];
+  const base = models.value.map(m => ({ value: m.id, label: m.name }));
+  const customLabels = Array.from(new Set(
+    images.value.map(img => (img as any).custom_model).filter(Boolean)
+  ));
+  const customOpts = (customLabels as string[]).map(label => ({ value: `custom:${label}`, label: `${label} (自定义)` }));
+  return [{ value: '', label: '所有模型' }, ...base, ...customOpts];
 });
 
 // Debounce search
@@ -206,8 +216,20 @@ const fetchImages = async () => {
     };
     
     if (searchQuery.value) params.search = searchQuery.value;
-    if (selectedCategory.value) params.category_id = selectedCategory.value;
-    if (selectedModel.value) params.model_id = selectedModel.value;
+    if (selectedCategory.value) {
+      if (String(selectedCategory.value).startsWith('custom:')) {
+        params.custom_category = String(selectedCategory.value).slice('custom:'.length);
+      } else {
+        params.category_id = selectedCategory.value;
+      }
+    }
+    if (selectedModel.value) {
+      if (String(selectedModel.value).startsWith('custom:')) {
+        params.custom_model = String(selectedModel.value).slice('custom:'.length);
+      } else {
+        params.model_id = selectedModel.value;
+      }
+    }
     if (selectedTags.value.length) params.tag_ids = selectedTags.value.join(',');
     
     const response = await axios.get('/api/v1/images/', { params });

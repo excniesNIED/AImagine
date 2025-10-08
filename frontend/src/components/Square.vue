@@ -91,8 +91,7 @@
               {{ image.prompt }}
             </p>
             <div class="flex items-center justify-between text-xs text-text-secondary dark:text-gray-500">
-              <span v-if="image.model">{{ image.model.name }}</span>
-              <span v-else-if="image.custom_model">{{ image.custom_model }}</span>
+              <span>{{ image.model?.name || image.custom_model || '未知模型' }}</span>
               <span>{{ formatDate(image.created_at) }}</span>
             </div>
           </div>
@@ -179,13 +178,21 @@ const selectedTags = ref<number[]>([]);
 const selectedImage = ref<Image | null>(null);
 
 const categoryOptions = computed(() => {
-  const opts = categories.value.map(c => ({ value: c.id, label: c.name }));
-  return [{ value: '', label: '所有分类' }, ...opts];
+  const base = categories.value.map(c => ({ value: c.id, label: c.name }));
+  const customLabels = Array.from(new Set(
+    images.value.map(img => img.custom_category).filter(Boolean)
+  ));
+  const customOpts = (customLabels as string[]).map(label => ({ value: `custom:${label}`, label: `${label} (自定义)` }));
+  return [{ value: '', label: '所有分类' }, ...base, ...customOpts];
 });
 
 const modelOptions = computed(() => {
-  const opts = models.value.map(m => ({ value: m.id, label: m.name }));
-  return [{ value: '', label: '所有模型' }, ...opts];
+  const base = models.value.map(m => ({ value: m.id, label: m.name }));
+  const customLabels = Array.from(new Set(
+    images.value.map(img => img.custom_model).filter(Boolean)
+  ));
+  const customOpts = (customLabels as string[]).map(label => ({ value: `custom:${label}`, label: `${label} (自定义)` }));
+  return [{ value: '', label: '所有模型' }, ...base, ...customOpts];
 });
 
 // Debounce search
@@ -209,9 +216,24 @@ const fetchImages = async () => {
     };
     
     if (searchQuery.value) params.search = searchQuery.value;
-    if (selectedCategory.value) params.category_id = selectedCategory.value;
-    if (selectedModel.value) params.model_id = selectedModel.value;
+    if (selectedCategory.value) {
+      if (String(selectedCategory.value).startsWith('custom:')) {
+        params.custom_category = String(selectedCategory.value).slice('custom:'.length);
+      } else {
+        params.category_id = selectedCategory.value;
+      }
+    }
+    if (selectedModel.value) {
+      if (String(selectedModel.value).startsWith('custom:')) {
+        params.custom_model = String(selectedModel.value).slice('custom:'.length);
+      } else {
+        params.model_id = selectedModel.value;
+      }
+    }
     if (selectedTags.value.length) params.tag_ids = selectedTags.value.join(',');
+    // Enforce visibility constraints for hidden tags/categories: backend will filter by viewer
+    // For safety on client, pass a hint param to trigger server policy if supported
+    params.enforce_visibility = true;
     
     const response = await axios.get('/api/v1/images/public', { params });
     

@@ -19,7 +19,7 @@
           
           <div class="flex h-full">
             <!-- Image Section -->
-            <div class="flex-1 bg-black flex items-center justify-center p-8">
+                <div class="flex-1 bg-black flex items-center justify-center p-8">
               <img
                 :src="currentImage.alist_url"
                 :alt="currentImage.prompt"
@@ -34,7 +34,7 @@
                 <div>
                   <h2 class="text-2xl font-bold mb-2">作品详情</h2>
                   <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span>{{ currentImage.model.name }}</span>
+                    <span>{{ currentImage.model?.name || currentImage.custom_model || '未知模型' }}</span>
                     <span>•</span>
                     <span>{{ formatDate(currentImage.created_at) }}</span>
                   </div>
@@ -67,10 +67,10 @@
                   <h3 class="text-lg font-semibold mb-2">分类与标签</h3>
                   <div class="space-y-2">
                     <span class="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded-full text-sm">
-                      {{ currentImage.category.name }}
+                      {{ currentImage.category?.name || currentImage.custom_category || '未分类' }}
                     </span>
                     <span
-                      v-for="tag in currentImage.tags"
+                      v-for="tag in (currentImage.tags || [])"
                       :key="tag.id"
                       class="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm ml-2"
                     >
@@ -118,7 +118,7 @@
                         @click="viewVersion(version)"
                         :class="[
                           'flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors',
-                          version.id === image.id
+                          version.id === currentImage.id
                             ? 'bg-primary-100 dark:bg-primary-900/30 border border-primary-300 dark:border-primary-700'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                         ]"
@@ -131,7 +131,7 @@
 
                         <div class="flex-1 min-w-0">
                           <p class="text-sm font-medium truncate">
-                            {{ version.id === image.id ? '当前版本' : `版本 ${index + 1}` }}
+                            {{ version.id === currentImage.id ? '当前版本' : `版本 ${index + 1}` }}
                           </p>
                           <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
                             {{ version.prompt.substring(0, 50) }}...
@@ -141,7 +141,7 @@
                           </p>
                         </div>
 
-                        <div v-if="version.id !== image.id" class="flex gap-1">
+                        <div v-if="version.id !== currentImage.id" class="flex gap-1">
                           <button
                             @click.stop="createVersionFrom(version)"
                             class="p-1 text-gray-500 hover:text-primary-600 dark:hover:text-primary-400"
