@@ -6,7 +6,7 @@
         <div class="fixed inset-0 bg-black bg-opacity-75"></div>
         
         <!-- Modal -->
-        <div class="relative w-full max-w-6xl max-h-[90vh] overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
+        <div class="relative w-full max-w-6xl h-[90vh] overflow-hidden bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
           <!-- Close button -->
           <button
             @click="$emit('close')"
