@@ -54,14 +54,14 @@
           </button>
           
           <!-- User Menu (hidden on mobile) -->
-          <div class="relative user-menu-container z-50 hidden md:block" v-show="user && isClient">
+          <div class="relative user-menu-container z-50 hidden md:block" v-if="user && isClient">
             <transition name="auth-fade">
               <div v-if="!authLoading" class="auth-content">
                 <button
                   @click="showUserMenu = !showUserMenu"
                   class="user-menu-button"
                 >
-                  <span class="text-sm font-medium">{{ user.username }}</span>
+                  <span class="text-sm font-medium">{{ user?.username }}</span>
                   <svg
                     class="w-4 h-4 transition-transform duration-200"
                     :class="{ 'rotate-180': showUserMenu }"
@@ -81,7 +81,7 @@
                       </svg>
                       个人资料
                     </a>
-                    <a v-if="user.role === 'admin'" href="/admin" class="dropdown-item">
+                    <a v-if="user?.role === 'admin'" href="/admin" class="dropdown-item">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -105,7 +105,7 @@
           </div>
 
           <!-- Auth buttons (hidden on mobile) -->
-          <div v-show="(!user || !isClient) && !authLoading" class="hidden md:flex space-x-2 auth-content">
+          <div v-if="(!user || !isClient) && !authLoading" class="hidden md:flex space-x-2 auth-content">
             <a href="/login" class="auth-btn auth-btn-login">登录</a>
             <a href="/register" class="auth-btn auth-btn-register">注册</a>
           </div>
@@ -140,7 +140,7 @@
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
-              <span>{{ user.username }}</span>
+              <span>{{ user?.username }}</span>
             </div>
             <a href="/profile" class="mobile-nav-item" @click="showMobileMenu = false">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,7 +148,7 @@
               </svg>
               个人资料
             </a>
-            <a v-if="user.role === 'admin'" href="/admin" class="mobile-nav-item" @click="showMobileMenu = false">
+            <a v-if="user?.role === 'admin'" href="/admin" class="mobile-nav-item" @click="showMobileMenu = false">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

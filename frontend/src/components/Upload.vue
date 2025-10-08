@@ -404,23 +404,46 @@ const addExistingTag = (tag: any) => {
 const handleTagEnter = async () => {
   const tagName = tagInput.value.trim();
   if (!tagName) return;
-  
+
+  // Debug authentication state
+  const authStoreToken = authStore.token;
+  const localStorageToken = localStorage.getItem('token');
+  console.log('Auth state debug:', {
+    authStoreToken: authStoreToken ? `${authStoreToken.substring(0, 10)}...` : 'null',
+    localStorageToken: localStorageToken ? `${localStorageToken.substring(0, 10)}...` : 'null',
+    isAuthenticated: authStore.isAuthenticated
+  });
+
+  // Check if user is still authenticated before making the request
+  const token = authStoreToken || localStorageToken;
+  if (!token) {
+    console.error('No token found!');
+    showToast('请先登录后再创建标签', 'error');
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 1000);
+    return;
+  }
+
   // Check if tag already exists in filtered list
   const existingTag = tags.value.find(
     tag => tag.name.toLowerCase() === tagName.toLowerCase()
   );
-  
+
   if (existingTag) {
     // Add existing tag
     addExistingTag(existingTag);
   } else {
     // Create new tag
     try {
-      const response = await axios.post('/api/v1/tags', {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('/api/v1/tags/', {
         name: tagName,
         is_public: false // Default to private for user-created tags
+      }, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
-      
+
       const newTag = response.data;
       tags.value.push(newTag);
       selectedTags.value.push(newTag);
@@ -428,7 +451,16 @@ const handleTagEnter = async () => {
       filterTags();
       showToast('标签已创建并添加', 'success');
     } catch (error: any) {
-      if (error.response?.data?.detail?.includes('already exists')) {
+      console.error('Tag creation error:', error);
+
+      if (error.response?.status === 401) {
+        // Handle authentication error specifically
+        showToast('登录已过期，请重新登录', 'error');
+        authStore.logout();
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1000);
+      } else if (error.response?.data?.detail?.includes('already exists')) {
         showToast('标签已存在', 'error');
       } else {
         showToast('创建标签失败', 'error');
@@ -524,9 +556,9 @@ onMounted(async () => {
 
   // Fetch models and categories
   const [modelsRes, categoriesRes, tagsRes] = await Promise.all([
-    axios.get('/api/v1/models'),
-    axios.get('/api/v1/categories'),
-    axios.get('/api/v1/tags')
+    axios.get('/api/v1/models/'),
+    axios.get('/api/v1/categories/'),
+    axios.get('/api/v1/tags/')
   ]);
 
   models.value = modelsRes.data;

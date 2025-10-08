@@ -106,10 +106,12 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from '../../utils/axios';
 import { useToast } from '../../composables/useToast';
+import { useAuthStore } from '../../stores/auth';
 import LoadingAnimation from '../LoadingAnimation.vue';
 import DropdownSelect from '../DropdownSelect.vue';
 
 const toast = useToast();
+const authStore = useAuthStore();
 
 interface Tag {
   id: number;
@@ -147,7 +149,7 @@ const filteredTags = computed(() => {
 const fetchTags = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('/api/v1/tags');
+    const response = await axios.get('/api/v1/tags/');
     tags.value = response.data;
   } catch (error) {
     toast.error('获取标签列表失败');
@@ -159,13 +161,22 @@ const fetchTags = async () => {
 
 const addTag = async () => {
   try {
-    await axios.post('/api/v1/tags', { name: newTagName.value });
+    await axios.post('/api/v1/tags/', { name: newTagName.value });
     toast.success('标签添加成功');
     newTagName.value = '';
     fetchTags();
-  } catch (error) {
-    toast.error('添加标签失败');
+  } catch (error: any) {
     console.error('Failed to add tag:', error);
+
+    if (error.response?.status === 401) {
+      toast.error('登录已过期，请重新登录');
+      authStore.logout();
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1000);
+    } else {
+      toast.error('添加标签失败');
+    }
   }
 };
 
@@ -179,7 +190,7 @@ const confirmEdit = async () => {
   if (!editingTagId.value) return;
 
   try {
-    await axios.put(`/api/v1/tags/${editingTagId.value}`, {
+    await axios.put(`/api/v1/tags/${editingTagId.value}/`, {
       name: editTagName.value
     });
     toast.success('标签更新成功');
@@ -195,7 +206,7 @@ const deleteTag = async (tagId: number) => {
   if (!confirm('确定要删除这个标签吗？')) return;
 
   try {
-    await axios.delete(`/api/v1/tags/${tagId}`);
+    await axios.delete(`/api/v1/tags/${tagId}/`);
     toast.success('标签删除成功');
     fetchTags();
   } catch (error) {

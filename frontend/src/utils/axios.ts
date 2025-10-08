@@ -3,9 +3,6 @@ import axios from 'axios';
 // Create axios instance
 const axiosInstance = axios.create({
   baseURL: '/',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Request interceptor to add token to all requests
