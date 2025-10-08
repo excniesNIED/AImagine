@@ -41,6 +41,36 @@ async def get_models(
         return models
 
 
+@router.get("/custom")
+async def get_custom_models(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db)
+):
+    """Return distinct custom models from images (free-text models users entered), with counts.
+    These are not in the `models` table but exist as `Image.custom_model` values.
+    """
+    from app.models.image import Image
+
+    rows = (
+        db.query(
+            Image.custom_model.label("name"),
+            func.count(Image.id).label("image_count")
+        )
+        .filter(Image.custom_model.isnot(None))
+        .group_by(Image.custom_model)
+        .order_by(func.count(Image.id).desc())
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+    return [
+        {"name": name, "image_count": int(image_count)}
+        for name, image_count in rows
+    ]
+
+
 @router.post("/", response_model=ModelResponse)
 async def create_model(
     model: ModelCreate,
