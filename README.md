@@ -15,7 +15,7 @@
 - **智能上传**: 支持拖拽上传，自动提取图片元数据
 - **版本控制**: 基于已有图片创建新版本，形成完整的创作树
 - **批量操作**: 支持批量编辑、批量删除等操作
-- **云端存储**: 通过 Alist 集成，支持多种云存储服务
+- **云端存储**: 通过 Openlist 集成，支持多种云存储服务
 
 ### 🔍 搜索与过滤
 - **全文搜索**: 支持提示词、模型、标签的模糊搜索
@@ -63,7 +63,7 @@
 
 1. **克隆项目**
 ```bash
-git clone https://github.com/yourusername/AImagine.git
+git clone https://github.com/excniesNIED/AImagine.git
 cd AImagine
 ```
 
@@ -242,9 +242,9 @@ ALIST_UPLOAD_PATH=/gallery
 PUBLIC_API_URL=http://localhost:8000
 ```
 
-### Alist 支持的存储后端
+### Openlist 支持的存储后端
 
-Alist 支持多种存储后端，包括但不限于：
+Openlist 支持多种存储后端，包括但不限于：
 - 本地存储
 - 阿里云 OSS
 - 腾讯云 COS
@@ -254,7 +254,7 @@ Alist 支持多种存储后端，包括但不限于：
 - AWS S3
 - 等等...
 
-详细配置请参考 [Alist 官方文档](https://alist.nn.ci/)。
+详细配置请参考 [Openlist 官方文档](https://doc.oplist.org)。
 
 ## 📦 部署指南
 
