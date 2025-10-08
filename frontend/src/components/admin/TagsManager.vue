@@ -149,7 +149,7 @@ const filteredTags = computed(() => {
 const fetchTags = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('/api/v1/tags/');
+    const response = await axios.get('/api/v1/tags/', { params: { include_count: true } });
     tags.value = response.data;
   } catch (error) {
     toast.error('获取标签列表失败');

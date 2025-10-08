@@ -85,14 +85,20 @@
             />
             
             <!-- Custom Model Input -->
-            <input
-              v-if="formData.model_id === 'other'"
-              v-model="formData.custom_model"
-              type="text"
-              placeholder="请输入模型名称"
-              class="mt-3 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              required
-            />
+            <div v-if="formData.model_id === 'other'" class="mt-3 flex items-center gap-2">
+              <input
+                v-model="formData.custom_model"
+                type="text"
+                placeholder="请输入模型名称"
+                class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                @keydown.enter.prevent="confirmCustomModel"
+                :aria-invalid="!customModelConfirmed && !!formData.custom_model"
+                required
+              />
+              <button type="button" @click="confirmCustomModel" class="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600" title="确认">
+                ✓
+              </button>
+            </div>
           </div>
           
           <div class="card p-6">
@@ -105,14 +111,20 @@
             />
             
             <!-- Custom Category Input -->
-            <input
-              v-if="formData.category_id === 'other'"
-              v-model="formData.custom_category"
-              type="text"
-              placeholder="请输入分类名称"
-              class="mt-3 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              required
-            />
+            <div v-if="formData.category_id === 'other'" class="mt-3 flex items-center gap-2">
+              <input
+                v-model="formData.custom_category"
+                type="text"
+                placeholder="请输入分类名称"
+                class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                @keydown.enter.prevent="confirmCustomCategory"
+                :aria-invalid="!customCategoryConfirmed && !!formData.custom_category"
+                required
+              />
+              <button type="button" @click="confirmCustomCategory" class="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600" title="确认">
+                ✓
+              </button>
+            </div>
           </div>
         </div>
         
@@ -299,6 +311,9 @@ const formData = ref({
   parameters: [{ key: '', value: '' }]
 });
 
+const customModelConfirmed = ref(false);
+const customCategoryConfirmed = ref(false);
+
 const models = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const tags = ref([]);
@@ -366,12 +381,26 @@ const handleFile = (file: File) => {
 const onModelChange = () => {
   if (formData.value.model_id !== 'other') {
     formData.value.custom_model = '';
+    customModelConfirmed.value = false;
   }
 };
 
 const onCategoryChange = () => {
   if (formData.value.category_id !== 'other') {
     formData.value.custom_category = '';
+    customCategoryConfirmed.value = false;
+  }
+};
+
+const confirmCustomModel = () => {
+  if (formData.value.custom_model && formData.value.custom_model.trim()) {
+    customModelConfirmed.value = true;
+  }
+};
+
+const confirmCustomCategory = () => {
+  if (formData.value.custom_category && formData.value.custom_category.trim()) {
+    customCategoryConfirmed.value = true;
   }
 };
 
@@ -488,14 +517,26 @@ const handleSubmit = async () => {
   }
   
   // Validate model and category
-  if (formData.value.model_id === 'other' && !formData.value.custom_model.trim()) {
-    showToast('请输入自定义模型名称', 'error');
-    return;
+  if (formData.value.model_id === 'other') {
+    if (!formData.value.custom_model.trim()) {
+      showToast('请输入自定义模型名称', 'error');
+      return;
+    }
+    if (!customModelConfirmed.value) {
+      showToast('请按回车或点击√确认自定义模型', 'error');
+      return;
+    }
   }
   
-  if (formData.value.category_id === 'other' && !formData.value.custom_category.trim()) {
-    showToast('请输入自定义分类名称', 'error');
-    return;
+  if (formData.value.category_id === 'other') {
+    if (!formData.value.custom_category.trim()) {
+      showToast('请输入自定义分类名称', 'error');
+      return;
+    }
+    if (!customCategoryConfirmed.value) {
+      showToast('请按回车或点击√确认自定义分类', 'error');
+      return;
+    }
   }
   
   isSubmitting.value = true;

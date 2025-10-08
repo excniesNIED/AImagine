@@ -18,19 +18,32 @@
           
           <div class="flex flex-col sm:flex-row gap-4 md:flex-none md:w-auto">
             <DropdownSelect
-              v-model="selectedCategory"
+              v-model="selectedCategories"
               :options="categoryOptions"
               placeholder="所有分类"
+              multiple
+              clearable
               @change="filterImages"
-              class="w-full sm:w-48"
+              class="w-full sm:w-64"
             />
 
             <DropdownSelect
-              v-model="selectedModel"
+              v-model="selectedModels"
               :options="modelOptions"
               placeholder="所有模型"
+              multiple
+              clearable
               @change="filterImages"
-              class="w-full sm:w-48"
+              class="w-full sm:w-64"
+            />
+            <DropdownSelect
+              v-model="selectedParamKeys"
+              :options="parameterKeyOptions"
+              placeholder="参数键"
+              multiple
+              clearable
+              @change="filterImages"
+              class="w-full sm:w-64"
             />
           </div>
         </div>
@@ -165,9 +178,10 @@ const pageSize = 20;
 
 // Filters
 const searchQuery = ref('');
-const selectedCategory = ref('');
-const selectedModel = ref('');
+const selectedCategories = ref<Array<string | number>>([]);
+const selectedModels = ref<Array<string | number>>([]);
 const selectedTags = ref<number[]>([]);
+const selectedParamKeys = ref<Array<string | number>>([]);
 
 const selectedImage = ref<Image | null>(null);
 
@@ -177,7 +191,7 @@ const categoryOptions = computed(() => {
     images.value.map(img => (img as any).custom_category).filter(Boolean)
   ));
   const customOpts = (customLabels as string[]).map(label => ({ value: `custom:${label}`, label: `${label} (自定义)` }));
-  return [{ value: '', label: '所有分类' }, ...base, ...customOpts];
+  return [...base, ...customOpts];
 });
 
 const modelOptions = computed(() => {
@@ -186,7 +200,17 @@ const modelOptions = computed(() => {
     images.value.map(img => (img as any).custom_model).filter(Boolean)
   ));
   const customOpts = (customLabels as string[]).map(label => ({ value: `custom:${label}`, label: `${label} (自定义)` }));
-  return [{ value: '', label: '所有模型' }, ...base, ...customOpts];
+  return [...base, ...customOpts];
+});
+
+const parameterKeyOptions = computed(() => {
+  const keys = new Set<string>();
+  images.value.forEach(img => {
+    (img.parameters || []).forEach(param => {
+      if (param?.key) keys.add(param.key);
+    });
+  });
+  return Array.from(keys).map(k => ({ value: k, label: k }));
 });
 
 // Debounce search
@@ -216,21 +240,20 @@ const fetchImages = async () => {
     };
     
     if (searchQuery.value) params.search = searchQuery.value;
-    if (selectedCategory.value) {
-      if (String(selectedCategory.value).startsWith('custom:')) {
-        params.custom_category = String(selectedCategory.value).slice('custom:'.length);
-      } else {
-        params.category_id = selectedCategory.value;
-      }
+    if (selectedCategories.value.length) {
+      const ids = selectedCategories.value.filter(v => !String(v).startsWith('custom:'));
+      const customs = selectedCategories.value.filter(v => String(v).startsWith('custom:')).map(v => String(v).slice('custom:'.length));
+      if (ids.length) params.category_ids = ids.join(',');
+      if (customs.length) params.custom_categories = customs.join(',');
     }
-    if (selectedModel.value) {
-      if (String(selectedModel.value).startsWith('custom:')) {
-        params.custom_model = String(selectedModel.value).slice('custom:'.length);
-      } else {
-        params.model_id = selectedModel.value;
-      }
+    if (selectedModels.value.length) {
+      const ids = selectedModels.value.filter(v => !String(v).startsWith('custom:'));
+      const customs = selectedModels.value.filter(v => String(v).startsWith('custom:')).map(v => String(v).slice('custom:'.length));
+      if (ids.length) params.model_ids = ids.join(',');
+      if (customs.length) params.custom_models = customs.join(',');
     }
     if (selectedTags.value.length) params.tag_ids = selectedTags.value.join(',');
+    if (selectedParamKeys.value.length) params.param_keys = selectedParamKeys.value.join(',');
     
     const response = await axios.get('/api/v1/images/', { params });
     

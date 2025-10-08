@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, and_
 from typing import List, Optional
 from app.core.database import get_db
-from app.api.deps import get_current_active_user, get_current_admin_user
+from app.api.deps import get_current_active_user, get_current_admin_user, get_current_user_optional
 from app.models import Image, User, Tag, KeyValueParameter, VersionHistory
+import json
 from app.schemas.image import ImageCreate, ImageUpdate, ImageResponse, ImageListResponse
 from app.services.alist_service import alist_service
 import uuid
@@ -20,8 +21,23 @@ async def get_public_images(
     search: Optional[str] = None,
     category_id: Optional[int] = None,
     model_id: Optional[int] = None,
+    # Multi-select support
+    category_ids: Optional[str] = None,
+    model_ids: Optional[str] = None,
+    # Custom selections support
+    custom_category: Optional[str] = None,
+    custom_model: Optional[str] = None,
+    custom_categories: Optional[str] = None,
+    custom_models: Optional[str] = None,
+    # Tag filter
     tag_ids: Optional[str] = None,
-    db: Session = Depends(get_db)
+    # Parameter filters: provide either comma-separated keys or JSON mapping of key->value
+    param_keys: Optional[str] = None,
+    param_filters: Optional[str] = None,
+    # Visibility policy hints
+    enforce_visibility: bool = False,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
 ):
     """Get all public images for the gallery/square page"""
     query = db.query(Image).options(
@@ -40,19 +56,85 @@ async def get_public_images(
             )
         )
     
-    # Category filter
+    # Category filter (single and multi)
     if category_id:
         query = query.filter(Image.category_id == category_id)
+    if category_ids:
+        try:
+            ids = [int(x) for x in category_ids.split(',') if x.strip()]
+            if ids:
+                query = query.filter(Image.category_id.in_(ids))
+        except Exception:
+            pass
+    # Custom category (single and multi)
+    if custom_category:
+        query = query.filter(Image.custom_category == custom_category)
+    if custom_categories:
+        custom_list = [x.strip() for x in custom_categories.split(',') if x.strip()]
+        if custom_list:
+            query = query.filter(Image.custom_category.in_(custom_list))
     
-    # Model filter
+    # Model filter (single and multi)
     if model_id:
         query = query.filter(Image.model_id == model_id)
+    if model_ids:
+        try:
+            ids = [int(x) for x in model_ids.split(',') if x.strip()]
+            if ids:
+                query = query.filter(Image.model_id.in_(ids))
+        except Exception:
+            pass
+    # Custom model (single and multi)
+    if custom_model:
+        query = query.filter(Image.custom_model == custom_model)
+    if custom_models:
+        custom_list = [x.strip() for x in custom_models.split(',') if x.strip()]
+        if custom_list:
+            query = query.filter(Image.custom_model.in_(custom_list))
     
-    # Tags filter
+    # Tags filter (already supports multi via CSV)
     if tag_ids:
         tag_id_list = [int(x) for x in tag_ids.split(',') if x.strip()]
         if tag_id_list:
             query = query.join(Image.tags).filter(Tag.id.in_(tag_id_list)).distinct()
+
+    # Parameter filters
+    # - param_keys: comma-separated keys that must be present on the image (any value)
+    # - param_filters: JSON string mapping key -> exact value (all key-value pairs must match)
+    if param_keys:
+        keys = [k.strip() for k in param_keys.split(',') if k.strip()]
+        for k in keys:
+            query = query.filter(Image.parameters.any(KeyValueParameter.key == k))
+    if param_filters:
+        try:
+            kv = json.loads(param_filters)
+            if isinstance(kv, dict):
+                for k, v in kv.items():
+                    if v is None or str(v).strip() == "":
+                        # Only require key presence
+                        query = query.filter(Image.parameters.any(KeyValueParameter.key == k))
+                    else:
+                        query = query.filter(
+                            Image.parameters.any(
+                                and_(KeyValueParameter.key == k, KeyValueParameter.value == str(v))
+                            )
+                        )
+        except Exception:
+            pass
+
+    # Enforce visibility: if requested, restrict images that contain private tags
+    if enforce_visibility:
+        if current_user is None:
+            # Anonymous viewers should not see images having any private tag
+            query = query.filter(~Image.tags.any(Tag.is_public == False))
+        else:
+            # Admin can see all; regular users cannot see images with private tags owned by others
+            if getattr(current_user, "role", None) and getattr(current_user.role, "value", None) == "admin":
+                pass
+            else:
+                query = query.filter(
+                    ~Image.tags.any(and_(Tag.is_public == False, Tag.owner_id != current_user.id))
+                )
     
     # Get total count
     total = query.count()
@@ -75,7 +157,19 @@ async def get_images(
     search: Optional[str] = None,
     category_id: Optional[int] = None,
     model_id: Optional[int] = None,
+    # Multi-select support
+    category_ids: Optional[str] = None,
+    model_ids: Optional[str] = None,
+    # Custom selections support
+    custom_category: Optional[str] = None,
+    custom_model: Optional[str] = None,
+    custom_categories: Optional[str] = None,
+    custom_models: Optional[str] = None,
+    # Tag filter
     tag_ids: Optional[str] = None,
+    # Parameter filters
+    param_keys: Optional[str] = None,
+    param_filters: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
@@ -99,19 +193,68 @@ async def get_images(
             )
         )
     
-    # Category filter
+    # Category filter (single and multi)
     if category_id:
         query = query.filter(Image.category_id == category_id)
+    if category_ids:
+        try:
+            ids = [int(x) for x in category_ids.split(',') if x.strip()]
+            if ids:
+                query = query.filter(Image.category_id.in_(ids))
+        except Exception:
+            pass
+    # Custom category (single and multi)
+    if custom_category:
+        query = query.filter(Image.custom_category == custom_category)
+    if custom_categories:
+        custom_list = [x.strip() for x in custom_categories.split(',') if x.strip()]
+        if custom_list:
+            query = query.filter(Image.custom_category.in_(custom_list))
     
-    # Model filter
+    # Model filter (single and multi)
     if model_id:
         query = query.filter(Image.model_id == model_id)
+    if model_ids:
+        try:
+            ids = [int(x) for x in model_ids.split(',') if x.strip()]
+            if ids:
+                query = query.filter(Image.model_id.in_(ids))
+        except Exception:
+            pass
+    # Custom model (single and multi)
+    if custom_model:
+        query = query.filter(Image.custom_model == custom_model)
+    if custom_models:
+        custom_list = [x.strip() for x in custom_models.split(',') if x.strip()]
+        if custom_list:
+            query = query.filter(Image.custom_model.in_(custom_list))
     
-    # Tags filter
+    # Tags filter (already supports multi via CSV)
     if tag_ids:
         tag_id_list = [int(x) for x in tag_ids.split(',') if x.strip()]
         if tag_id_list:
             query = query.join(Image.tags).filter(Tag.id.in_(tag_id_list)).distinct()
+
+    # Parameter filters
+    if param_keys:
+        keys = [k.strip() for k in param_keys.split(',') if k.strip()]
+        for k in keys:
+            query = query.filter(Image.parameters.any(KeyValueParameter.key == k))
+    if param_filters:
+        try:
+            kv = json.loads(param_filters)
+            if isinstance(kv, dict):
+                for k, v in kv.items():
+                    if v is None or str(v).strip() == "":
+                        query = query.filter(Image.parameters.any(KeyValueParameter.key == k))
+                    else:
+                        query = query.filter(
+                            Image.parameters.any(
+                                and_(KeyValueParameter.key == k, KeyValueParameter.value == str(v))
+                            )
+                        )
+        except Exception:
+            pass
     
     # Get total count
     total = query.count()
