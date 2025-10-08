@@ -66,6 +66,9 @@
           </div>
         </div>
 
+        <!-- Images Management -->
+        <ImagesManager v-if="activeTab === 'images'" />
+
         <!-- Categories Management -->
         <CategoriesManager v-if="activeTab === 'categories'" />
 
@@ -92,6 +95,7 @@ import { ref, onMounted } from 'vue';
 import axios from '../utils/axios';
 import AppHeader from './AppHeader.vue';
 import ToastContainer from './ToastContainer.vue';
+import ImagesManager from './admin/ImagesManager.vue';
 import CategoriesManager from './admin/CategoriesManager.vue';
 import TagsManager from './admin/TagsManager.vue';
 import ModelsManager from './admin/ModelsManager.vue';
@@ -119,6 +123,7 @@ interface Image {
 
 const tabs = [
   { key: 'dashboard', label: '仪表盘' },
+  { key: 'images', label: '作品管理' },
   { key: 'categories', label: '分类管理' },
   { key: 'tags', label: '标签管理' },
   { key: 'models', label: '模型管理' },

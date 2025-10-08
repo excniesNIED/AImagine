@@ -28,3 +28,4 @@ class CategoryResponse(CategoryBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+    image_count: Optional[int] = None

@@ -132,7 +132,7 @@ const mergeModelOptions = computed(() => {
 const fetchModels = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('/api/v1/models/');
+    const response = await axios.get('/api/v1/models/', { params: { include_count: true } });
     models.value = response.data;
   } catch (error) {
     toast.error('获取模型列表失败');

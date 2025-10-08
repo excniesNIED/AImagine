@@ -56,6 +56,43 @@
       </div>
     </div>
 
+    <!-- Custom Categories (from images) -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold">自定义分类（来自作品）</h2>
+        <p class="text-sm text-gray-500 mt-1">这些分类来自作品中的“自定义分类”，未在系统分类中创建</p>
+      </div>
+      <div class="p-6">
+        <div v-if="loading" class="flex justify-center py-8">
+          <LoadingAnimation />
+        </div>
+        <div v-else-if="customCategories.length === 0" class="text-center py-8 text-gray-500">
+          暂无自定义分类
+        </div>
+        <div v-else class="space-y-2">
+          <div
+            v-for="item in customCategories"
+            :key="item.name"
+            class="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            <div class="flex items-center gap-4">
+              <span class="font-medium">{{ item.name }}</span>
+              <span class="text-sm text-gray-500">{{ item.image_count || 0 }} 张图片</span>
+            </div>
+            <div class="flex gap-2">
+              <button
+                @click="newCategoryName = item.name"
+                class="px-3 py-1 text-sm bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 rounded hover:bg-emerald-200 dark:hover:bg-emerald-800 transition-colors"
+                title="将此自定义分类添加到系统分类"
+              >
+                作为系统分类添加
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Merge Categories Modal -->
     <div v-if="showMergeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
@@ -110,6 +147,7 @@ interface Category {
 }
 
 const categories = ref<Category[]>([]);
+const customCategories = ref<{ name: string; image_count: number }[]>([]);
 const loading = ref(true);
 const newCategoryName = ref('');
 
@@ -132,8 +170,11 @@ const mergeCategoryOptions = computed(() => {
 const fetchCategories = async () => {
   try {
     loading.value = true;
-    const response = await axios.get('/api/v1/categories/');
+    const response = await axios.get('/api/v1/categories/', { params: { include_count: true } });
     categories.value = response.data;
+    // fetch custom categories as well
+    const customRes = await axios.get('/api/v1/categories/custom', { params: { skip: 0, limit: 200 } });
+    customCategories.value = customRes.data;
   } catch (error) {
     toast.error('获取分类列表失败');
     console.error('Failed to fetch categories:', error);

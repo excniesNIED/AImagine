@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from typing import List
 from app.core.database import get_db
 from app.api.deps import get_current_active_user, get_current_admin_user
@@ -13,10 +14,31 @@ router = APIRouter()
 async def get_models(
     skip: int = 0,
     limit: int = 100,
+    include_count: bool = False,
     db: Session = Depends(get_db)
 ):
-    models = db.query(Model).offset(skip).limit(limit).all()
-    return models
+    if include_count:
+        from app.models.image import Image
+        results = (
+            db.query(
+                Model,
+                func.count(Image.id).label("image_count")
+            )
+            .outerjoin(Image, Image.model_id == Model.id)
+            .group_by(Model.id)
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
+        enriched: List[ModelResponse] = []
+        for mdl, count in results:
+            mdl_schema = ModelResponse.model_validate(mdl)
+            setattr(mdl_schema, "image_count", int(count or 0))
+            enriched.append(mdl_schema)
+        return enriched
+    else:
+        models = db.query(Model).offset(skip).limit(limit).all()
+        return models
 
 
 @router.post("/", response_model=ModelResponse)
