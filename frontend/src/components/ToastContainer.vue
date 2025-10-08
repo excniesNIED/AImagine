@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed bottom-4 right-4 z-50 space-y-2">
+  <div class="fixed bottom-4 right-4 z-[9999] space-y-2">
     <TransitionGroup name="toast">
       <div
         v-for="toast in toasts"
