@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen">
     <AppHeader />
-    
+
     <main class="container py-8">
       <!-- Search and Filter Bar -->
       <div class="mb-8 space-y-4">
@@ -11,11 +11,11 @@
               v-model="searchQuery"
               type="text"
               placeholder="搜索提示词、模型或标签..."
-              class="w-full px-4 py-2 border border-border-light dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               @input="debouncedSearch"
             />
           </div>
-          
+
           <div class="flex flex-col sm:flex-row gap-4 md:flex-none md:w-auto">
             <DropdownSelect
               v-model="selectedCategories"
@@ -36,6 +36,7 @@
               @change="filterImages"
               class="w-full sm:w-64"
             />
+
             <DropdownSelect
               v-model="selectedParamKeys"
               :options="parameterKeyOptions"
@@ -47,7 +48,7 @@
             />
           </div>
         </div>
-        
+
         <!-- Tags Filter -->
         <div class="flex flex-wrap gap-2" v-if="tags.length">
           <button
@@ -55,10 +56,10 @@
             :key="tag.id"
             @click="toggleTag(tag.id)"
             :class="[
-              'px-3 py-1 rounded-full text-sm transition-colors',
+              'px-3 py-1 rounded-full text-sm transition-all font-medium',
               selectedTags.includes(tag.id)
-                ? 'bg-primary-500 text-white'
-                : 'bg-background-accent dark:bg-gray-700 text-text-primary dark:text-gray-300 hover:bg-secondary-100 dark:hover:bg-gray-600'
+                ? 'bg-primary text-white shadow-md'
+                : 'bg-accent dark:bg-gray-700 text-foreground hover:bg-accent/80 dark:hover:bg-gray-600 hover:shadow-sm'
             ]"
           >
             {{ tag.name }}
@@ -70,26 +71,28 @@
       <div v-if="loading" class="flex justify-center py-12">
         <LoadingAnimation />
       </div>
-      
-      <div v-else-if="images.length === 0" class="text-center py-12">
-        <p class="text-text-secondary dark:text-gray-400">暂无图片</p>
-      </div>
-      
+
+      <Card v-else-if="images.length === 0" class="py-12">
+        <CardContent class="text-center">
+          <p class="text-muted-foreground">暂无图片</p>
+        </CardContent>
+      </Card>
+
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        <div
+        <Card
           v-for="image in images"
           :key="image.id"
           @click="openImage(image)"
-          class="group relative aspect-square overflow-hidden rounded-lg cursor-pointer transform transition-all duration-200 hover:scale-105"
+          class="group relative aspect-square overflow-hidden cursor-pointer transform transition-all duration-200 hover:scale-105 p-0"
         >
           <img
             :src="image.alist_url"
             :alt="image.prompt"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover rounded-lg"
             loading="lazy"
           />
-          
-          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-200">
+
+          <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity duration-200 rounded-lg">
             <div class="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-200">
               <p class="text-sm line-clamp-2">{{ image.prompt }}</p>
               <div class="flex items-center justify-between mt-2 text-xs">
@@ -98,17 +101,14 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
-      
+
       <!-- Load More -->
       <div v-if="hasMore && !loading" class="text-center mt-8">
-        <button
-          @click="loadMore"
-          class="btn-primary"
-        >
+        <Button @click="loadMore">
           加载更多
-        </button>
+        </Button>
       </div>
     </main>
     
@@ -133,6 +133,10 @@ import AppHeader from './AppHeader.vue';
 import ImageDetailModal from './ImageDetailModal.vue';
 import ToastContainer from './ToastContainer.vue';
 import LoadingAnimation from './LoadingAnimation.vue';
+import Card from './ui/Card.vue';
+import CardContent from './ui/CardContent.vue';
+import Button from './ui/Button.vue';
+import Input from './ui/Input.vue';
 import DropdownSelect from './DropdownSelect.vue';
 import { useAuthStore } from '../stores/auth';
 
