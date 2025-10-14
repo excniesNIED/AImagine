@@ -16,7 +16,7 @@
               v-model="searchQuery"
               type="text"
               placeholder="搜索提示词、模型或标签..."
-              class="w-full px-4 py-2 border border-border-light dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all hover:border-primary-300 dark:hover:border-primary-700"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               @input="debouncedSearch"
             />
           </div>
@@ -64,7 +64,7 @@
               'px-3 py-1 rounded-full text-sm transition-all font-medium',
               selectedTags.includes(tag.id)
                 ? 'bg-primary-500 text-white shadow-md'
-                : 'bg-background-accent dark:bg-gray-700 text-text-primary dark:text-gray-300 hover:bg-secondary-100 dark:hover:bg-gray-600 hover:shadow-sm'
+                : 'bg-accent dark:bg-gray-700 text-foreground hover:bg-accent/80 dark:hover:bg-gray-600 hover:shadow-sm'
             ]"
           >
             {{ tag.name }}
@@ -81,7 +81,7 @@
         <svg class="w-24 h-24 mx-auto text-gray-300 dark:text-gray-700 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
         </svg>
-        <p class="text-text-secondary dark:text-gray-400 text-lg">暂无公开作品</p>
+        <p class="text-muted-foreground text-lg">暂无公开作品</p>
         <p class="text-gray-500 dark:text-gray-500 text-sm mt-2">用户可以在上传作品时选择公开分享</p>
       </div>
       
@@ -101,10 +101,10 @@
             />
           </div>
           <div class="p-3">
-            <p class="text-sm text-text-primary dark:text-gray-300 line-clamp-2 mb-2 font-medium">
+            <p class="text-sm text-foreground line-clamp-2 mb-2 font-medium">
               {{ image.prompt }}
             </p>
-            <div class="flex items-center justify-between text-xs text-text-secondary dark:text-gray-500">
+            <div class="flex items-center justify-between text-xs text-muted-foreground">
               <span>{{ image.model?.name || image.custom_model || '未知模型' }}</span>
               <span>{{ formatDate(image.created_at) }}</span>
             </div>

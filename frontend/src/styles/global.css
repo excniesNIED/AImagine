@@ -3,6 +3,72 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 210 20% 98%;  /* 使用薄荷白色调 */
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 228 66% 75%;  /* 海浪泡沫主色调 */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 173 25% 89%;  /* 辅助色调 */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 173 25% 89%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 220 75% 95%;  /* 点缀背景色 */
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 228 66% 75%;  /* 主色调作为 ring */
+    --radius: 0.5rem;
+    --chart-1: 228 66% 75%;
+    --chart-2: 173 25% 89%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 231.4 74.4% 54.3%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 231.4 74.4% 54.3%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
     color-scheme: light;
@@ -13,7 +79,7 @@
   }
 
   body {
-    @apply bg-background-mint dark:bg-gray-900 text-text-primary dark:text-gray-100;
+    @apply bg-background text-foreground;
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
 
@@ -29,27 +95,27 @@
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
-  
+
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-border-light dark:border-gray-700;
+    @apply bg-card text-card-foreground rounded-lg shadow-sm border;
   }
-  
+
   .btn-primary {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200;
   }
-  
+
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-secondary-300 text-sm font-medium rounded-md text-text-primary bg-white hover:bg-secondary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-colors duration-200;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-input text-sm font-medium rounded-md text-secondary-foreground bg-background hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors duration-200;
   }
-  
+
   .btn-success {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-success hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success transition-colors duration-200;
   }
-  
+
   .btn-danger {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-danger hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger transition-colors duration-200;
   }
-  
+
   .btn-warning {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-900 bg-warning hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-warning transition-colors duration-200;
   }

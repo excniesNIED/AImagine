@@ -42,26 +42,38 @@ export const useAuthStore = defineStore('auth', () => {
   
   const login = async (credentials: { username: string; password: string }) => {
     try {
-      // OAuth2 expects form data, not JSON
+      // OAuth2 expects form data with proper fields
       const formData = new URLSearchParams();
       formData.append('username', credentials.username);
       formData.append('password', credentials.password);
-      
+
+      console.log('Sending login request to:', '/api/v1/auth/login');
+      console.log('Form data entries:', Array.from(formData.entries()));
+
       const response = await axios.post('/api/v1/auth/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
         },
       });
       const { access_token, user: userData } = response.data;
-      
+
+      console.log('Login successful:', { access_token: !!access_token, userData });
+
       token.value = access_token;
       user.value = userData;
       setStoredToken(access_token);
       // Don't call fetchProfile here - we already have user data from login response
-      
+
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Request data:', {
+        username: credentials.username,
+        passwordLength: credentials.password.length
+      });
       return false;
     }
   };

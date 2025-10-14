@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="loader-wrapper text-text-primary dark:text-white">
+  <div class="loader-wrapper text-foreground">
     <span class="loader-letter">L</span>
     <span class="loader-letter">o</span>
     <span class="loader-letter">a</span>
